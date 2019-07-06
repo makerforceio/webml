@@ -1,5 +1,5 @@
 <template>
-  <p>hey</p>
+	<Toolbar />
 </template>
 
 <script>
