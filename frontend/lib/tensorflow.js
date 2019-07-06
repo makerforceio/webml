@@ -21,7 +21,9 @@ class DistTensorflow {
   constructor(modelId, statsCallback) {
     this.modelId = modelId;
     this.statsCallback = statsCallback;
-    this.model = await tf.loadLayersModel(`localhost:10200/model?id=${this.modelId}`);
+
+  tf.loadLayersModel(`localhost:10200/model?id=${this.modelId}`).then(function (model) {
+    this.model = model;
 
     // Compile the model with default optimizer and loss
     this.model.compile({
@@ -29,6 +31,7 @@ class DistTensorflow {
       loss: 'categoricalCrossentropy',
       metrics: ['accuracy'],
     });
+  });
   }
 
   async loadNextBatch() {
@@ -98,3 +101,5 @@ class DistTensorflow {
     this.stopped = true;
   }
 }
+
+export default DistTensorflow;

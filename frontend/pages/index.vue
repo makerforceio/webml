@@ -12,19 +12,6 @@
         </button>
       </template>
       <template v-slot:content>
-        <div class="mx-4 my-8" title="Major graph">
-          <h2 class="font-medium">
-            Loss
-          </h2>
-          <trend
-            :data="major"
-            :gradient="gradient"
-            :height="200"
-            auto-draw
-            smooth
-          >
-          </trend>
-        </div>
       </template>
     </Header>
     <Cards>
@@ -59,6 +46,7 @@ import Cards from '~/components/common/Cards.vue'
 import Card from '~/components/common/Card.vue'
 import CenteredText from '~/components/common/CenteredText.vue'
 import trend from 'vuetrend'
+import DistTensorflow from '~/lib/tensorflow.js';
 
 const gradient = ['#ffffff', '#ff974d']
 
@@ -74,7 +62,8 @@ export default {
   data() {
     return {
       gradient,
-      major: [0, 2, 5, 9, 5, 10, 3, 5, 0, 0, 1, 8, 2, 9, 0]
+      major: [0, 2, 5, 9, 5, 10, 3, 5, 0, 0, 1, 8, 2, 9, 0],
+      tf: DistTensorflow(id, function (metrics, batchNo) {}),
     }
   }
 }
