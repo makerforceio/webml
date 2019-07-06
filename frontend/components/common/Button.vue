@@ -1,8 +1,10 @@
 <template>
-	<button class="
+  <button
+    class="
 		font-bold
 		py-2 px-4
-		rounded">
-		<slot></slot>
-	</button>
+		rounded"
+  >
+    <slot></slot>
+  </button>
 </template>
