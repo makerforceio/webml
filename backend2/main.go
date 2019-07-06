@@ -84,7 +84,7 @@ func Cors(next httprouter.Handle) httprouter.Handle {
 }
 
 type BucketsInfo struct {
-  models []string `json:"models"`
+  Models []string `json:"models"`
 }
 func GetModels(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
   buckets, err := minioClient.ListBuckets()
@@ -94,8 +94,9 @@ func GetModels(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
   }
 
   bucketNames := BucketsInfo{}
+  bucketNames.Models = make([]string, 0)
   for _, bucket := range buckets {
-    bucketNames.models = append(bucketNames.models, bucket.Name)
+    bucketNames.Models = append(bucketNames.Models, bucket.Name)
   }
 
   w.Header().Set("Content-Type", "application/json")
