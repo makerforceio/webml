@@ -47,14 +47,6 @@
   </div>
 </template>
 
-<style>
-.head {
-  background: linear-gradient(45deg, #ff6900, #ff994f);
-  padding-bottom: 6rem;
-  margin-bottom: -6rem;
-}
-</style>
-
 <script>
 import Header from '~/components/common/Header.vue'
 import Cards from '~/components/common/Cards.vue'

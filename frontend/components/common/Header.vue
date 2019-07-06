@@ -18,6 +18,14 @@
   </div>
 </template>
 
+<style scoped>
+.head {
+  background: linear-gradient(45deg, #ff6900, #ff994f);
+  padding-bottom: 6rem;
+  margin-bottom: -6rem;
+}
+</style>
+
 <script>
 export default {
   props: {
