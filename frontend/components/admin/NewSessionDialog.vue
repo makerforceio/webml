@@ -1,32 +1,54 @@
 <template>
   <div class="fader fixed inset-0 p-6 flex items-center justify-center">
     <div class="bg-white rounded-card shadow-md m-6">
-      <div class="bg-primary text-white rounded-card flex items-center justify-start">
-		  <button class="m-5">
-			  <fa-icon size="2x" :icon="['far', 'times']" />
-		  </button>
-		<h1 class="text-2xl font-bold">New Session</h1>
+      <div
+        class="bg-primary text-white rounded-card flex items-center justify-start"
+      >
+        <button class="m-5">
+          <fa-icon size="2x" :icon="['far', 'times']" />
+        </button>
+        <h1 class="text-2xl font-bold flex-1">New Session</h1>
+        <button class="m-5 p-1" @click="submit">
+          Create
+        </button>
       </div>
-	  <div class="p-2">
-		  <div class="m-4">
-			  <input 
-			   class="text-2xl font-bold"
-				v-model="sessionName"
-				placeholder="Enter session name" />
-		  </div>
-		  <div class="m-4">
-			  <DropArea @input="sessionModel = $event" placeholder="Drop model here" />
-		  </div>
-		  <div class="m-4">
-			  <DropArea @input="sessionData = $event" placeholder="Drop data here" />
-		  </div>
-		  <div class="m-4">
-			  <DropArea @input="sessionLabels = $event" placeholder="Drop labels here" />
-		  </div>
-		  <div class="m-4">
-			  <DropArea @input="sessionDataParser = $event" placeholder="Drop data parser here" />
-		  </div>
-	  </div>
+      <div class="p-2">
+        <div class="m-4">
+          <input
+            class="text-2xl font-bold"
+            v-model="sessionName"
+            placeholder="Enter session name"
+          />
+        </div>
+        <div class="m-4">
+          <DropArea
+            @input="sessionModel = $event"
+            placeholder="Drop model here"
+            label="Model"
+          />
+        </div>
+        <div class="m-4">
+          <DropArea
+            @input="sessionData = $event"
+            placeholder="Drop data here"
+            label="Data"
+          />
+        </div>
+        <div class="m-4">
+          <DropArea
+            @input="sessionLabels = $event"
+            placeholder="Drop labels here"
+            label="Labels"
+          />
+        </div>
+        <div class="m-4">
+          <DropArea
+            @input="sessionDataParser = $event"
+            placeholder="Drop data parser here"
+            label="Data Parser"
+          />
+        </div>
+      </div>
     </div>
   </div>
 </template>
@@ -39,44 +61,65 @@
 
 <script>
 import DropArea from '~/components/common/DropArea.vue';
+import cuid from 'cuid';
 export default {
   components: {
   DropArea
   },
   data() {
     return {
-      sessionName: ''
+      sessionName: '',
+		sessionModel: null,
+	sessionData: null,
+		sessionLabels: null,
+		sessionDataParser: null,
+
     }
   },
   methods: {
-    onSubmit: async function(files, submitType) {
+	  async submit () {
       // let files = this.$refs.fileloader.files
 
-      var url = (function(type) {
-        switch (type) {
-          case 'dataset':
-            return 'localhost:10200/data'
-          case 'labels':
-            return 'localhost:10200/labels'
-          case 'scripts':
-            return 'localhost:10200/data_parse'
-          default:
-            return ''
-        }
-      })(submitType)
+		// validate
+		if (!this.sessionName || !this.sessionModel || !this.sessionData || !this.sessionLabels || !this.sessionDataParser) {
+			return;
+		}
 
-      for (var i = 0; i < files.length; i++) {
-        await fetch(url, {
-          method: 'PUT',
-          redirect: 'follow',
-          body: files[i]
-        })
+		// TODO: create meta.json
 
-        console.log(`Uploaded ${files[i].name}`)
-      }
+		const base = process.env.NUXT_ENV_BACKEND2_URL || 'http://localhost:10200';
+		  const modelid = cuid();
+		  const dataid = cuid();
+		  const dataparserid = cuid();
+		await fetch(base + '/model?id=' + modelid, {
+			method: 'PUT',
+			redirect: 'follow',
+			body: this.sessionModel,
+		});
+		await Promise.all([
+			async () => {
+				await fetch(base + '/data?model=' + modelid + '&id=' + dataid, {
+					method: 'PUT',
+					redirect: 'follow',
+					body: this.sessionData,
+				});
+			},
+			async () => {
+				await fetch(base + '/labels?model=' + modelid + '&id=' + dataid, {
+					method: 'PUT',
+					redirect: 'follow',
+					body: this.sessionLabels,
+				});
+			},
+			async () => {
+				await fetch(base + '/data_parser?model=' + modelid + '&id=' + dataparserid, {
+					method: 'PUT',
+					redirect: 'follow',
+					body: this.sessionDataParser,
+				});
+			},
+		]);
     }
   }
 }
 </script>
-
-<style></style>
