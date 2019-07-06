@@ -25,7 +25,7 @@ class DistTensorflow {
 
     // Initialize axios instance
     this.http = axios.create({
-      baseUrl: 'https://some-domain.com/api/'
+		baseUrl: 'https://some-domain.com/api/',
       timeout: 10000,
     });
 
@@ -47,7 +47,7 @@ class DistTensorflow {
     const labelShape = res.data.label;
 
     // Set batch size
-    this.batchsize = batchShape[0];
+    this.batchSize = batchShape[0];
 
     // Load the minibatch data
     res = await http.get('batch', {responseType: 'arraybuffer'});
@@ -65,17 +65,16 @@ class DistTensorflow {
   }
 
   updateWeights() async {
-    let old_weights = this.model.getWeights();
+    let oldWeights = this.model.getWeights();
 
-    await http.post('/weights', {
-      shape: old_weights.shape,
-      data: old_weights.flatten()
+    let res = await http.post('/weights', {
+      shape: oldWeights.shape,
+      data: await oldWeights.flatten().array()
     });
 
-    let res = await http.get('/weights');
-    let new_weights = tf.tensor(res.data.data, {shape: res.data.shape});
+    let weights = tf.tensor(res.data.data, {shape: res.data.shape});
 
-    this.model.setWeights(new_weights);
+    this.model.setWeights(weights);
   }
 
   async train() {

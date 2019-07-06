@@ -12,6 +12,7 @@
     "fmt": "prettier --write **/*.vue **/*.js **/*.json"
   },
   "dependencies": {
+    "@fortawesome/pro-regular-svg-icons": "^5.9.0",
     "@nuxtjs/axios": "^5.3.6",
     "@tensorflow/tfjs": "^1.2.2",
     "cross-env": "^5.2.0",
@@ -20,6 +21,7 @@
     "vuetrend": "^0.3.4"
   },
   "devDependencies": {
+    "@fortawesome/fontawesome-svg-core": "^1.2.19",
     "@fortawesome/pro-light-svg-icons": "^5.9.0",
     "@fortawesome/vue-fontawesome": "^0.1.6",
     "eslint-config-prettier": "^4.1.0",
