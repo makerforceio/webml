@@ -7,21 +7,24 @@
 		  </button>
 		<h1 class="text-2xl font-bold">New Session</h1>
       </div>
-	  <div class="p-4">
-		  <div class="m-2">
+	  <div class="p-2">
+		  <div class="m-4">
 			  <input 
-			   class="text-xl font-bold"
+			   class="text-2xl font-bold"
 				v-model="sessionName"
 				placeholder="Enter session name" />
 		  </div>
-		  <div class="m-2">
+		  <div class="m-4">
 			  <DropArea @input="sessionModel = $event" placeholder="Drop model here" />
 		  </div>
-		  <div class="m-2">
+		  <div class="m-4">
 			  <DropArea @input="sessionData = $event" placeholder="Drop data here" />
 		  </div>
-		  <div class="m-2">
-			  <DropArea @input="session= $event" placeholder="Drop data here" />
+		  <div class="m-4">
+			  <DropArea @input="sessionLabels = $event" placeholder="Drop labels here" />
+		  </div>
+		  <div class="m-4">
+			  <DropArea @input="sessionDataParser = $event" placeholder="Drop data parser here" />
 		  </div>
 	  </div>
     </div>
@@ -35,8 +38,11 @@
 </style>
 
 <script>
+import DropArea from '~/components/common/DropArea.vue';
 export default {
-  components: {},
+  components: {
+  DropArea
+  },
   data() {
     return {
       sessionName: ''
