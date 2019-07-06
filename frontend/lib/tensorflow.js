@@ -4,7 +4,8 @@ class DistTensorflow {
   token;
   model;
   http;
-  batchsize;
+  batchSize;
+  stopped = false;
 
   constructor(token) {
     this.token = token;
@@ -65,6 +66,19 @@ class DistTensorflow {
 
   async train() {
     // Train on the minibatch
+    while(!stopped) {
+      let minibatch = await loadNextBatch()
 
+      await this.model.fit(minibatch.data, minibatch.labels, {
+        batchSize: this.batchSize,
+        shuffle: true,
+      });
+
+      await updateWeights();
+    }
+  }
+
+  stop() {
+    this.stopped = true;
   }
 }
