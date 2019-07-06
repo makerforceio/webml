@@ -1,35 +1,76 @@
 <template>
-	<div class="
-		bg-primary text-white
-		rounded-b-card"
-		style="background: linear-gradient(30deg, #FF6900, #FF974D)">
-		<div class="px-4 py-8">
-			<h1 class="
-				font-bold
-				text-xl
-			">Training title</h1>
-		</div>
-		<div class="p-4"
-			title="Major graph">
-			<trend 
-				:data="major"
-				:gradient="gradient"
-				height="200"
-				auto-draw
-				smooth>
-			</trend>
-		</div>
+	<div class="bg-gray-200">
 		<div class="
-			flex items-stretch
-			p-4">
-			<Button class="
-				flex-1
+			head
+
+			bg-primary text-white
+			rounded-b-card
+			p-2">
+			<div class="m-4">
+				<h1 class="
+					font-bold
+					text-4xl
+				">Training title</h1>
+				<div class="
+					font-bold
+				">By Author</div>
+			</div>
+			<div class="m-4"
+				title="Major graph">
+				<trend 
+					:data="major"
+					:gradient="gradient"
+					:height="200"
+					auto-draw
+					smooth>
+				</trend>
+			</div>
+			<div class="
+				flex items-stretch
+				m-4">
+				<Button class="
+					flex-1
+					bg-white
+					hover:bg-white
+					text-primary">Pause</Button>
+			</div>
+		</div>
+		<div class="p-2">
+			<div class="
 				bg-white
-				hover:bg-white
-				text-primary">Pause</Button>
+				rounded-card
+				shadow-md
+				m-4 p-2">
+				<trend 
+					:data="major"
+					:height="200"
+					auto-draw
+					smooth>
+				</trend>
+			</div>
+			<div class="
+				bg-white
+				rounded-card
+				shadow-md
+				m-4 p-2">
+				<trend 
+					:data="major"
+					:height="200"
+					auto-draw
+					smooth>
+				</trend>
+			</div>
 		</div>
 	</div>
 </template>
+
+<style>
+.head {
+	background: linear-gradient(45deg, #FF6900, #FF994F);
+	padding-bottom: 8rem;
+	margin-bottom: -8rem;
+}
+</style>
 
 <script>
 import Button from '../common/Button.vue';
