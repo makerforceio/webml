@@ -25,7 +25,7 @@ class DistTensorflow {
 
     // Initialize axios instance
     this.http = axios.create({
-      baseUrl: 'https://some-domain.com/api/'
+		baseUrl: 'https://some-domain.com/api/',
       timeout: 10000,
     });
 
