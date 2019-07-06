@@ -1,29 +1,65 @@
 <template>
   <div>
-    <Header title="Sessions">
-      <template v-slot:buttons-right>
-        <button class="my-2 ml-4" @click="showNewSessionDialog = true">
-          <fa-icon size="2x" :icon="['far', 'plus']" />
+    <Header title="Session title" subtitle="By Author">
+      <template v-slot:buttons-left>
+        <button class="my-2 mr-4">
+          <fa-icon size="2x" :icon="['far', 'arrow-left']" />
         </button>
+      </template>
+      <template v-slot:buttons-right>
+        <button class="my-2 ml-4">
+          <fa-icon size="2x" :icon="['far', 'times-hexagon']" />
+        </button>
+        <button class="my-2 ml-4">
+          <fa-icon size="2x" :icon="['far', 'pause']" />
+        </button>
+      </template>
+      <template v-slot:content>
+        <div class="mx-4 my-8" title="Major graph">
+          <trend
+            :data="major"
+            :gradient="gradient"
+            :height="200"
+            auto-draw
+            smooth
+          >
+          </trend>
+        </div>
       </template>
     </Header>
     <Cards>
-      <Card v-for="model in models" :title="model.title" :key="model.title" arrow>
-        <div class="flex">
-          <Subcard subtitle="Elapsed">
-            <CenteredText class="text-4xl">
-            {{ model.elapsed }}
-            </CenteredText>
-          </Subcard>
-          <Subcard subtitle="Loss">
-            <CenteredText class="text-4xl">
-            {{ model.loss }}
-            </CenteredText>
-          </Subcard>
-        </div>
+      <Card subtitle="Elapsed time">
+        <CenteredText class="text-4xl">
+          10m 45s
+        </CenteredText>
+      </Card>
+      <Card subtitle="Loss">
+        <CenteredText class="text-4xl">
+          10:45
+        </CenteredText>
+      </Card>
+      <Card subtitle="Epoch">
+        <CenteredText class="text-4xl">
+          100
+        </CenteredText>
+      </Card>
+      <Card subtitle="No. Clients">
+        <CenteredText class="text-4xl">
+          4
+        </CenteredText>
+      </Card>
+      <Card subtitle="Accuracy">
+        <CenteredText class="text-4xl">
+          78%
+        </CenteredText>
+      </Card>
+      <Card subtitle="Loss">
+        <trend :data="major" :height="200" auto-draw smooth> </trend>
+      </Card>
+      <Card subtitle="Loss">
+        <trend :data="major" :height="200" auto-draw smooth> </trend>
       </Card>
     </Cards>
-    <NewSessionDialog :show.sync="showNewSessionDialog" />
   </div>
 </template>
 
@@ -31,49 +67,25 @@
 import Header from '~/components/common/Header.vue'
 import Cards from '~/components/common/Cards.vue'
 import Card from '~/components/common/Card.vue'
-import Subcard from '~/components/common/Subcard.vue'
 import CenteredText from '~/components/common/CenteredText.vue'
-import NewSessionDialog from '~/components/admin/NewSessionDialog.vue'
+import trend from 'vuetrend'
+
+const gradient = ['#ffffff', '#ff974d']
 
 export default {
+  layout: 'client',
   components: {
     Header,
     Cards,
     Card,
-    Subcard,
     CenteredText,
-    NewSessionDialog
+    trend
   },
-  data: () => ({
-    showNewSessionDialog: false,
-    models: [
-      {
-        title: "Hello",
-        elapsed: "10:43.4",
-        loss: 43,
-      },
-      {
-        title: "Hello",
-        elapsed: "10:43.4",
-        loss: 43,
-      },
-    ],
-  }),
-  created: function () {
-    // Initialize all the models and format them follow the data format above
-    fetch('http://localhost:10200/models').then((res) => {
-      return res.json();
-    }).then((body) => {
-      return Promise.all(body.models
-                        .filter(modelName => modelName != 'parser')
-                        .map((modelName) => {
-                          return fetch(`http://localhost:10201/params/${modelName}`)
-                            .then((res) => res.text())
-                            .then((loss) => { title: modelName, loss });
-                        }));
-    }).then((models) => {
-      this.models = models;
-    });
+  data() {
+    return {
+      gradient,
+      major: [0, 2, 5, 9, 5, 10, 3, 5, 0, 0, 1, 8, 2, 9, 0]
+    }
   }
 }
 </script>
