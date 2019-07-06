@@ -8,7 +8,7 @@
           webml.app
         </h2>
     </div>
-      <Button class="mt-5 w-56 bg-white hover:bg-white text-primary">Get started!</Button>
+    <nuxt-link to="/admin"><Button class="mt-5 w-56 bg-white hover:bg-white text-primary">Get started!</Button></nuxt-link>
   </div>
 </template>
 
