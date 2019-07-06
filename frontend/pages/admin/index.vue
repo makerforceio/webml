@@ -8,30 +8,16 @@
       </template>
     </Header>
     <Cards>
-      <Card title="Hey 2" arrow>
+      <Card v-for="model in models" :title="model.title" :key="model.title" arrow>
         <div class="flex">
           <Subcard subtitle="Elapsed">
             <CenteredText class="text-4xl">
-              10:25.4
+            {{ model.elapsed }}
             </CenteredText>
           </Subcard>
           <Subcard subtitle="Loss">
             <CenteredText class="text-4xl">
-              10000.1
-            </CenteredText>
-          </Subcard>
-        </div>
-      </Card>
-      <Card title="Lol" arrow>
-        <div class="flex">
-          <Subcard subtitle="Elapsed">
-            <CenteredText class="text-4xl">
-              10:25.4
-            </CenteredText>
-          </Subcard>
-          <Subcard subtitle="Loss">
-            <CenteredText class="text-4xl">
-              10000.1
+            {{ model.loss }}
             </CenteredText>
           </Subcard>
         </div>
@@ -58,14 +44,23 @@ export default {
     CenteredText,
     NewSessionDialog
   },
-  data() {
-    return {
-      showNewSessionDialog: false,
-		models: [],
-    };
-},
+  data: () => ({
+    showNewSessionDialog: false,
+    models: [
+      {
+        title: "Hello",
+        elapsed: "10:43.4",
+        loss: 43,
+      },
+      {
+        title: "Hello",
+        elapsed: "10:43.4",
+        loss: 43,
+      },
+    ],
+  }),
   created: function () {
-    // Initialize all the models
+    // Initialize all the models and format them follow the data format above
     let res = fetch('localhost:10200/models')
   }
 }
