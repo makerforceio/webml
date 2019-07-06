@@ -30,7 +30,7 @@
       </template>
     </Header>
     <Cards>
-      <Card subtitle="Uptime">
+      <Card subtitle="Elapsed time">
         <CenteredText class="text-4xl">
           10m 45s
         </CenteredText>

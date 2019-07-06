@@ -43,7 +43,7 @@
           100
         </CenteredText>
       </Card>
-      <Card subtitle="No. Clients">
+      <Card subtitle="Client count">
         <CenteredText class="text-4xl">
           4
         </CenteredText>
