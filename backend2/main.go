@@ -59,6 +59,8 @@ func main() {
   router.POST("/model", UploadModel)
   router.GET("/data", GetData)
   router.POST("/data", UploadData)
+  router.GET("/labels", GetLabels)
+  router.POST("/labels", UploadLabels)
   router.GET("/data_parser", GetDataParser)
   router.POST("/data_parser", UploadDataParser)
   router.POST("/batch", BatchData)
@@ -105,6 +107,26 @@ func UploadData(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
 
   expiry := time.Second * 120
   presignedURL, err := minioClient.PresignedPutObject(bucketName, "data:" + id, expiry)
+  if err != nil {
+    http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
+		return
+  }
+
+  w.Write([]byte(presignedURL.String()))
+}
+
+func UploadLabels(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
+  bucketName := r.FormValue("model")
+  id := r.FormValue("id")
+
+  exists, err := minioClient.BucketExists(bucketName)
+  if !(err == nil && exists) {
+    http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
+    return
+  }
+
+  expiry := time.Second * 120
+  presignedURL, err := minioClient.PresignedPutObject(bucketName, "label:" + id, expiry)
   if err != nil {
     http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
 		return
@@ -160,6 +182,30 @@ func GetData(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
   reqParams := make(url.Values)
   expiry := time.Second * 120
   presignedURL, err := minioClient.PresignedGetObject(model, "data:" + id, expiry, reqParams)
+  if err != nil {
+      http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
+      return
+  }
+
+  w.Write([]byte(presignedURL.String()))
+}
+
+func GetLabels(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
+  model := r.FormValue("model")
+  if model == "" {
+    http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
+    return
+  }
+
+  id := r.FormValue("id")
+  if id == "" {
+    http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
+    return
+  }
+
+  reqParams := make(url.Values)
+  expiry := time.Second * 120
+  presignedURL, err := minioClient.PresignedGetObject(model, "label:" + id, expiry, reqParams)
   if err != nil {
       http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
       return
