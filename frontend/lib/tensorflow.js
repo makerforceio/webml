@@ -67,12 +67,11 @@ class DistTensorflow {
   updateWeights() async {
     let oldWeights = this.model.getWeights();
 
-    await http.post('/weights', {
+    let res = await http.post('/weights', {
       shape: oldWeights.shape,
-      data: oldWeights.flatten()
+      data: oldWeights.flatten().array()
     });
 
-    let res = await http.get('/weights');
     let weights = tf.tensor(res.data.data, {shape: res.data.shape});
 
     this.model.setWeights(weights);

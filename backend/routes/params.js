@@ -21,9 +21,16 @@ router.post('/update/:token', jsonParser, function(req, res) {
     let newWeights = tf.movingAverage(oldWeights, weights, ALPHA);
 
     res.send({
-    })
+      shape: newWeights.shape,
+      data: newWeights.flatten().array()
+    });
   } else {
     paramsMap.set(token, weights);
+
+    res.send({
+      shape: weights.shape,
+      data: weights.flatten().array()
+    });
   }
 });
 
