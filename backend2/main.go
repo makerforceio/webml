@@ -4,6 +4,7 @@ import (
   "bytes"
   "crypto/rand"
   "encoding/hex"
+  "encoding/json"
   "io"
   "log"
   "net/http"
@@ -55,6 +56,7 @@ func main() {
   // Routes
   router := httprouter.New()
   // Return minio presigned URLs
+  router.GET("/models", GetModels)
   router.GET("/model", GetModel)
   router.POST("/model", UploadModel)
   router.GET("/data", GetData)
@@ -72,6 +74,25 @@ func main() {
   // Start server
   log.Printf("starting server on %s", listen)
   log.Fatal(http.ListenAndServe(listen, router))
+}
+
+type BucketsInfo struct {
+  models []string `json:"models"`
+}
+func GetModels(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
+  buckets, err := minioClient.ListBuckets()
+  if err != nil {
+    http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
+    return
+  }
+
+  bucketNames := BucketsInfo{}
+  for _, bucket := range buckets {
+    bucketNames.models = append(bucketNames.models, bucket.Name)
+  }
+
+  w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(bucketNames)
 }
 
 func UploadModel(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
