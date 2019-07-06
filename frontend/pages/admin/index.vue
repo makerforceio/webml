@@ -2,7 +2,7 @@
   <div>
     <Header title="Active Sessions"></Header>
     <Cards>
-      <Card v-for="model in models" :title="model.title">
+      <Card v-for="model in models" :title="model.title" arrow>
         <div class="flex">
           <Subcard subtitle="Elapsed">
             <CenteredText class="text-4xl">
@@ -36,10 +36,21 @@ export default {
     CenteredText
   },
   data: () => ({
-    models,
+    models: [
+      {
+        title: "Hello",
+        elapsed: "10:43.4",
+        loss: 43,
+      },
+      {
+        title: "Hello",
+        elapsed: "10:43.4",
+        loss: 43,
+      },
+    ],
   }),
   created: function () {
-    // Initialize all the models and format them
+    // Initialize all the models and format them follow the data format above
     let res = fetch('localhost:10200/models')
   }
 }
