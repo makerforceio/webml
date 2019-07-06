@@ -115,7 +115,7 @@ func UploadModel(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
 		return
   }
 
-  w.Write([]byte(presignedURL.String()))
+  http.Redirect(w, r, presignedURL, http.StatusSeeOther)
 }
 
 func UploadData(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
@@ -135,7 +135,7 @@ func UploadData(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
 		return
   }
 
-  w.Write([]byte(presignedURL.String()))
+  http.Redirect(w, r, presignedURL, http.StatusSeeOther)
 }
 
 func UploadLabels(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
@@ -155,7 +155,7 @@ func UploadLabels(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
 		return
   }
 
-  w.Write([]byte(presignedURL.String()))
+  http.Redirect(w, r, presignedURL, http.StatusSeeOther)
 }
 
 func UploadDataParser(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
@@ -168,7 +168,7 @@ func UploadDataParser(w http.ResponseWriter, r *http.Request, p httprouter.Param
 		return
   }
 
-  w.Write([]byte(presignedURL.String()))
+  http.Redirect(w, r, presignedURL, http.StatusSeeOther)
 }
 
 func GetModel(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
@@ -186,7 +186,7 @@ func GetModel(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
       return
   }
 
-  w.Write([]byte(presignedURL.String()))
+  http.Redirect(w, r, presignedURL, http.StatusSeeOther)
 }
 
 func GetData(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
@@ -210,7 +210,7 @@ func GetData(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
       return
   }
 
-  w.Write([]byte(presignedURL.String()))
+  http.Redirect(w, r, presignedURL, http.StatusSeeOther)
 }
 
 func GetLabels(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
@@ -234,7 +234,7 @@ func GetLabels(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
       return
   }
 
-  w.Write([]byte(presignedURL.String()))
+  http.Redirect(w, r, presignedURL, http.StatusSeeOther)
 }
 
 func GetBatchData(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
@@ -258,7 +258,7 @@ func GetBatchData(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
       return
   }
 
-  w.Write([]byte(presignedURL.String()))
+  http.Redirect(w, r, presignedURL, http.StatusSeeOther)
 }
 
 func GetBatchLabels(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
@@ -282,7 +282,7 @@ func GetBatchLabels(w http.ResponseWriter, r *http.Request, p httprouter.Params)
       return
   }
 
-  w.Write([]byte(presignedURL.String()))
+  http.Redirect(w, r, presignedURL, http.StatusSeeOther)
 }
 
 func GetDataParser(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
@@ -300,7 +300,7 @@ func GetDataParser(w http.ResponseWriter, r *http.Request, p httprouter.Params) 
       return
   }
 
-  w.Write([]byte(presignedURL.String()))
+  http.Redirect(w, r, presignedURL, http.StatusSeeOther)
 }
 
 func BatchData(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
