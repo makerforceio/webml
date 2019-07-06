@@ -67,7 +67,9 @@ export default {
       return Promise.all(body.models
                         .filter(modelName => modelName != 'parser')
                         .map((modelName) => {
-                          return fetch(`http://localhost:10201/params/${modelName}`).then((res) => res.text());
+                          return fetch(`http://localhost:10201/params/${modelName}`)
+                            .then((res) => res.text())
+                            .then((loss) => { title: modelName, loss });
                         }));
     }).then((models) => {
       this.models = models;
