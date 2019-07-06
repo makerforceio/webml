@@ -56,18 +56,18 @@ func main() {
   // Routes
   router := httprouter.New()
   // Return minio presigned URLs
-  router.GET("/models", GetModels)
-  router.GET("/model", GetModel)
-  router.POST("/model", UploadModel)
-  router.GET("/data", GetData)
-  router.POST("/data", UploadData)
-  router.GET("/labels", GetLabels)
-  router.POST("/labels", UploadLabels)
-  router.GET("/data/batch", GetBatchData)
-  router.GET("/labels/batch", GetBatchLabels)
-  router.GET("/data_parser", GetDataParser)
-  router.POST("/data_parser", UploadDataParser)
-  router.POST("/batch", BatchData)
+  router.GET("/models", Cors(GetModels))
+  router.GET("/model", Cors(GetModel))
+  router.POST("/model", Cors(UploadModel))
+  router.GET("/data", Cors(GetData))
+  router.POST("/data", Cors(UploadData))
+  router.GET("/labels", Cors(GetLabels))
+  router.POST("/labels", Cors(UploadLabels))
+  router.GET("/data/batch", Cors(GetBatchData))
+  router.GET("/labels/batch", Cors(GetBatchLabels))
+  router.GET("/data_parser", Cors(GetDataParser))
+  router.POST("/data_parser", Cors(UploadDataParser))
+  router.POST("/batch", Cors(BatchData))
 
   router.POST("/parse", TestParse)
 
@@ -76,8 +76,15 @@ func main() {
   log.Fatal(http.ListenAndServe(listen, router))
 }
 
+func Cors(next httprouter.Handle) httprouter.Handle {
+  return func (w http.ResponseWriter, r *http.Request, p httprouter.Params) {
+    w.Header().Set("Access-Control-Allow-Origin", "*")
+    next(w, r, p)
+  }
+}
+
 type BucketsInfo struct {
-  models []string `json:"models"`
+  Models []string `json:"models"`
 }
 func GetModels(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
   buckets, err := minioClient.ListBuckets()
@@ -87,8 +94,9 @@ func GetModels(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
   }
 
   bucketNames := BucketsInfo{}
+  bucketNames.Models = make([]string, 0)
   for _, bucket := range buckets {
-    bucketNames.models = append(bucketNames.models, bucket.Name)
+    bucketNames.Models = append(bucketNames.Models, bucket.Name)
   }
 
   w.Header().Set("Content-Type", "application/json")
@@ -115,7 +123,7 @@ func UploadModel(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
 		return
   }
 
-  http.Redirect(w, r, presignedURL, http.StatusTemporaryRedirect)
+  http.Redirect(w, r, presignedURL.String(), http.StatusTemporaryRedirect)
 }
 
 func UploadData(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
@@ -135,7 +143,7 @@ func UploadData(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
 		return
   }
 
-  http.Redirect(w, r, presignedURL, http.StatusTemporaryRedirect)
+  http.Redirect(w, r, presignedURL.String(), http.StatusTemporaryRedirect)
 }
 
 func UploadLabels(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
@@ -155,7 +163,7 @@ func UploadLabels(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
 		return
   }
 
-  http.Redirect(w, r, presignedURL, http.StatusTemporaryRedirect)
+  http.Redirect(w, r, presignedURL.String(), http.StatusTemporaryRedirect)
 }
 
 func UploadDataParser(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
@@ -168,7 +176,7 @@ func UploadDataParser(w http.ResponseWriter, r *http.Request, p httprouter.Param
 		return
   }
 
-  http.Redirect(w, r, presignedURL, http.StatusTemporaryRedirect)
+  http.Redirect(w, r, presignedURL.String(), http.StatusTemporaryRedirect)
 }
 
 func GetModel(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
@@ -186,7 +194,7 @@ func GetModel(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
       return
   }
 
-  http.Redirect(w, r, presignedURL, http.StatusTemporaryRedirect)
+  http.Redirect(w, r, presignedURL.String(), http.StatusTemporaryRedirect)
 }
 
 func GetData(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
@@ -210,7 +218,7 @@ func GetData(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
       return
   }
 
-  http.Redirect(w, r, presignedURL, http.StatusTemporaryRedirect)
+  http.Redirect(w, r, presignedURL.String(), http.StatusTemporaryRedirect)
 }
 
 func GetLabels(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
@@ -234,7 +242,7 @@ func GetLabels(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
       return
   }
 
-  http.Redirect(w, r, presignedURL, http.StatusTemporaryRedirect)
+  http.Redirect(w, r, presignedURL.String(), http.StatusTemporaryRedirect)
 }
 
 func GetBatchData(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
@@ -258,7 +266,7 @@ func GetBatchData(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
       return
   }
 
-  http.Redirect(w, r, presignedURL, http.StatusTemporaryRedirect)
+  http.Redirect(w, r, presignedURL.String(), http.StatusTemporaryRedirect)
 }
 
 func GetBatchLabels(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
@@ -282,7 +290,7 @@ func GetBatchLabels(w http.ResponseWriter, r *http.Request, p httprouter.Params)
       return
   }
 
-  http.Redirect(w, r, presignedURL, http.StatusTemporaryRedirect)
+  http.Redirect(w, r, presignedURL.String(), http.StatusTemporaryRedirect)
 }
 
 func GetDataParser(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
@@ -300,7 +308,7 @@ func GetDataParser(w http.ResponseWriter, r *http.Request, p httprouter.Params) 
       return
   }
 
-  http.Redirect(w, r, presignedURL, http.StatusTemporaryRedirect)
+  http.Redirect(w, r, presignedURL.String(), http.StatusTemporaryRedirect)
 }
 
 func BatchData(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
