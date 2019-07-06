@@ -2,30 +2,16 @@
   <div>
     <Header title="Active Sessions"></Header>
     <Cards>
-      <Card title="Hey 2" arrow>
+      <Card v-for="model in models" :title="model.title">
         <div class="flex">
           <Subcard subtitle="Elapsed">
             <CenteredText class="text-4xl">
-              10:25.4
+            {{ model.elapsed }}
             </CenteredText>
           </Subcard>
           <Subcard subtitle="Loss">
             <CenteredText class="text-4xl">
-              10000.1
-            </CenteredText>
-          </Subcard>
-        </div>
-      </Card>
-      <Card title="Lol" arrow>
-        <div class="flex">
-          <Subcard subtitle="Elapsed">
-            <CenteredText class="text-4xl">
-              10:25.4
-            </CenteredText>
-          </Subcard>
-          <Subcard subtitle="Loss">
-            <CenteredText class="text-4xl">
-              10000.1
+            {{ model.loss }}
             </CenteredText>
           </Subcard>
         </div>
@@ -49,11 +35,11 @@ export default {
     Subcard,
     CenteredText
   },
-  data: () => {
+  data: () => ({
     models,
-  },
+  }),
   created: function () {
-    // Initialize all the models
+    // Initialize all the models and format them
     let res = fetch('localhost:10200/models')
   }
 }
