@@ -1,6 +1,9 @@
 package main
 
 import (
+  "bytes"
+  "crypto/rand"
+  "encoding/hex"
   "io"
   "log"
   "net/http"
@@ -91,8 +94,8 @@ func UploadModel(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
 }
 
 func UploadData(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
-  bucketName := r.FormValue("id")
-  hash := r.FormValue("hash")
+  bucketName := r.FormValue("model")
+  id := r.FormValue("id")
 
   exists, err := minioClient.BucketExists(bucketName)
   if !(err == nil && exists) {
@@ -101,7 +104,7 @@ func UploadData(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
   }
 
   expiry := time.Second * 120
-  presignedURL, err := minioClient.PresignedPutObject(bucketName, hash, expiry)
+  presignedURL, err := minioClient.PresignedPutObject(bucketName, "data:" + id, expiry)
   if err != nil {
     http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
 		return
@@ -156,7 +159,7 @@ func GetData(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
 
   reqParams := make(url.Values)
   expiry := time.Second * 120
-  presignedURL, err := minioClient.PresignedGetObject(model, id, expiry, reqParams)
+  presignedURL, err := minioClient.PresignedGetObject(model, "data:" + id, expiry, reqParams)
   if err != nil {
       http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
       return
@@ -190,12 +193,162 @@ func BatchData(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
   modelId := r.FormValue("model_id")
   dataId := r.FormValue("data_id")
 
+  batchSize, err := strconv.Atoi(r.FormValue("batch_size"))
+  if err != nil {
+    http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
+    return
+  }
+
   if dataParserId == "" || labelParserId == "" || modelId == "" || dataId == "" {
     http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
     return
   }
 
-  
+  dataParserObject, err := minioClient.GetObject("parser", dataParserId, minio.GetObjectOptions{})
+  if err != nil {
+    http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
+    return
+  }
+  dataParserBytes := new(bytes.Buffer)
+  dataParserBytes.ReadFrom(dataParserObject)
+  dataParser := dataParserBytes.String()
+
+  labelParserObject, err := minioClient.GetObject("parser", labelParserId, minio.GetObjectOptions{})
+  if err != nil {
+    http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
+    return
+  }
+  labelParserBytes := new(bytes.Buffer)
+  labelParserBytes.ReadFrom(labelParserObject)
+  labelParser := labelParserBytes.String()
+
+  dataL := lua.NewState()
+  defer dataL.Close()
+  err = dataL.DoString(dataParser)
+  if err != nil {
+    http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
+		return
+  }
+
+  dataObject, err := minioClient.GetObject(modelId, "data:" + dataId, minio.GetObjectOptions{})
+  if err != nil {
+    http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
+		return
+  }
+
+  batchIds := make([]string, 0)
+
+  buf := make([]byte, 512)
+  batch := make([][]byte, 0)
+  for {
+    n, err := dataObject.Read(buf)
+    if err == io.EOF {
+      break
+    } else if err != nil {
+      http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
+  		return
+    }
+
+    err = dataL.CallByParam(lua.P {
+      Fn: dataL.GetGlobal("parse"),
+      NRet: 1,
+      Protect: true,
+      }, lua.LString(buf), lua.LNumber(n))
+    if err != nil {
+      log.Printf("%s", err)
+      http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
+  		return
+    }
+
+    lv := dataL.Get(-1)
+    dataL.Pop(1)
+    if table, ok := lv.(*lua.LTable); ok {
+      table.ForEach(func(_ lua.LValue, v lua.LValue) {
+        val := []byte(v.(lua.LString).String())
+        batch = append(batch, val)
+        if len(batch) >= batchSize {
+          batchId := RandomHex()
+          data := make([]byte, 0)
+          for _, datum := range(batch) {
+            data = append(data, datum...)
+          }
+          _, err := minioClient.PutObject(modelId, "batch:data:" + batchId, bytes.NewReader(data), -1, minio.PutObjectOptions{})
+          if err != nil {
+            log.Printf("%s", err)
+            http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
+        		return
+          }
+          batchIds = append(batchIds, batchId)
+        }
+      })
+    }
+  }
+
+  labelL := lua.NewState()
+  defer labelL.Close()
+  err = labelL.DoString(labelParser)
+  if err != nil {
+    http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
+		return
+  }
+
+  labelObject, err := minioClient.GetObject(modelId, "label:" + dataId, minio.GetObjectOptions{})
+  if err != nil {
+    http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
+		return
+  }
+
+  buf = make([]byte, 512)
+  i := 0
+  for {
+    n, err := labelObject.Read(buf)
+    if err == io.EOF {
+      break
+    } else if err != nil {
+      http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
+  		return
+    }
+
+    err = labelL.CallByParam(lua.P {
+      Fn: labelL.GetGlobal("parse"),
+      NRet: 1,
+      Protect: true,
+      }, lua.LString(buf), lua.LNumber(n))
+    if err != nil {
+      log.Printf("%s", err)
+      http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
+  		return
+    }
+
+    lv := labelL.Get(-1)
+    labelL.Pop(1)
+    if table, ok := lv.(*lua.LTable); ok {
+      table.ForEach(func(_ lua.LValue, v lua.LValue) {
+        val := []byte(v.(lua.LString).String())
+        batch = append(batch, val)
+        if len(batch) >= batchSize {
+          batchId := batchIds[i]
+          data := make([]byte, 0)
+          for _, datum := range(batch) {
+            data = append(data, datum...)
+          }
+          _, err := minioClient.PutObject(modelId, "batch:label:" + batchId, bytes.NewReader(data), -1, minio.PutObjectOptions{})
+          if err != nil {
+            log.Printf("%s", err)
+            http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
+        		return
+          }
+          i += 1
+          if i >= len(batchIds) {
+            w.WriteHeader(200)
+            return
+          }
+        }
+      })
+    }
+  }
+
+  w.WriteHeader(200)
 }
 
 func TestParse(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
@@ -245,4 +398,13 @@ func TestParse(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
   }
 
   w.Write([]byte(strconv.Itoa(num)))
+}
+
+func RandomHex() string {
+	b := make([]byte, 16)
+	_, err := rand.Read(b)
+	if err != nil {
+		panic("unable to generate 16 bytes of randomness")
+	}
+	return hex.EncodeToString(b)
 }
