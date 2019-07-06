@@ -4,17 +4,15 @@ image_size = 0
 
 current = ""
 
--- function to_i32 (b1, b2, b3, b4)
---   local val = b1 << 0 | ((b2 & 0xFF) <<  8) | ((b3 & 0xFF) << 16) | ((b4 & 0xFF) << 24)
---   return val
--- end
+function to_i32 (b1, b2, b3, b4)
+  local val = ((b1 & 0xFF) << 0) | ((b2 & 0xFF) <<  8) | ((b3 & 0xFF) << 16) | ((b4 & 0xFF) << 24)
+  return val
+end
 
 function parse (chunk, n) -- chunk is string of bytes
   if not parsed_headers then
-    -- local row_size = to_i32(string.byte(chunk, 8), string.byte(chunk, 9), string.byte(chunk, 10), string.byte(chunk, 11))
-    -- local col_size = to_i32(string.byte(chunk, 12), string.byte(chunk, 13), string.byte(chunk, 14), string.byte(chunk, 15))
-    local row_size = 28
-    local col_size = 28
+    local row_size = to_i32(string.byte(chunk, 8), string.byte(chunk, 9), string.byte(chunk, 10), string.byte(chunk, 11))
+    local col_size = to_i32(string.byte(chunk, 12), string.byte(chunk, 13), string.byte(chunk, 14), string.byte(chunk, 15))
     image_size = row_size * col_size
     parsed_headers = true
     position = 17
@@ -30,7 +28,7 @@ function parse (chunk, n) -- chunk is string of bytes
       results[i] = current
       current = ""
       i = i + 1
-    end    
+    end
     position = left_bytes + 1
   end
 
