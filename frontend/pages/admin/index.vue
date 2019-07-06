@@ -1,6 +1,12 @@
 <template>
   <div>
-    <Header title="Sessions"></Header>
+    <Header title="Sessions">
+      <template v-slot:buttons-right>
+        <button class="my-2 ml-4" @click="showNewSessionDialog = true">
+          <fa-icon size="2x" :icon="['far', 'plus']" />
+        </button>
+      </template>
+    </Header>
     <Cards>
       <Card title="Hey 2" arrow>
         <div class="flex">
@@ -31,6 +37,7 @@
         </div>
       </Card>
     </Cards>
+    <NewSessionDialog :show.sync="showNewSessionDialog" />
   </div>
 </template>
 <script>
@@ -39,6 +46,7 @@ import Cards from '~/components/common/Cards.vue'
 import Card from '~/components/common/Card.vue'
 import Subcard from '~/components/common/Subcard.vue'
 import CenteredText from '~/components/common/CenteredText.vue'
+import NewSessionDialog from '~/components/admin/NewSessionDialog.vue'
 
 export default {
   components: {
@@ -46,7 +54,13 @@ export default {
     Cards,
     Card,
     Subcard,
-    CenteredText
+    CenteredText,
+    NewSessionDialog
+  },
+  data() {
+    return {
+      showNewSessionDialog: false
+    }
   }
 }
 </script>

@@ -2,12 +2,12 @@
   <div>
     <Header title="Session title" subtitle="By Author">
       <template v-slot:buttons-left>
-        <button class="my-3 mr-4">
+        <button class="my-2 mr-4">
           <fa-icon size="2x" :icon="['far', 'arrow-left']" />
         </button>
       </template>
       <template v-slot:buttons-right>
-        <button class="my-3 ml-4">
+        <button class="my-2 ml-4">
           <fa-icon size="2x" :icon="['far', 'pause']" />
         </button>
       </template>
@@ -44,22 +44,10 @@
         </CenteredText>
       </Card>
       <Card subtitle="Loss">
-        <trend
-          :data="major"
-          :height="200"
-          auto-draw
-          smooth
-        >
-        </trend>
+        <trend :data="major" :height="200" auto-draw smooth> </trend>
       </Card>
       <Card subtitle="Loss">
-        <trend
-          :data="major"
-          :height="200"
-          auto-draw
-          smooth
-        >
-        </trend>
+        <trend :data="major" :height="200" auto-draw smooth> </trend>
       </Card>
     </Cards>
   </div>
