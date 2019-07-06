@@ -1,15 +1,27 @@
 import * as tf from '@tensorflow/tfjs';
 import axios from 'axios';
 
+/*
+* Params for logging
+*  -> Epoch
+*  -> Loss
+*  -> Accuracy
+*  -> Batch num
+*  -> Runtime
+*/
 class DistTensorflow {
   token;
   model;
   http;
   batchSize;
+  batchNo = 0;
   stopped = false;
 
-  constructor(token) {
+  statsCallback;
+
+  constructor(token, statsCallback) {
     this.token = token;
+    this.statsCallback = statsCallback;
 
     // Initialize axios instance
     this.http = axios.create({
@@ -45,6 +57,7 @@ class DistTensorflow {
     res = await http.get('label', {responseType: 'arraybuffer'});
     let labelArray = new UInt8Array(res.data);
 
+    this.batchNo += 1;
     return {
       "data": tf.tensor(batchArray, {shape: batchShape}),
       "labels": tf.tensor(labelArray, {shape: labelShape})
@@ -69,13 +82,11 @@ class DistTensorflow {
     // Train on the minibatch
     while(!stopped) {
       let minibatch = await loadNextBatch()
-
-      await this.model.fit(minibatch.data, minibatch.labels, {
-        batchSize: this.batchSize,
-        shuffle: true,
-      });
-
+      let metrics = await this.model.trainOnBatch(minibatch.data, minibatch.label);
       await updateWeights();
+
+      // Callbacks for statistics
+      statsCallback(metrics, this.batchNo);
     }
   }
 
