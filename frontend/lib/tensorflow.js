@@ -1,5 +1,4 @@
 import * as tf from '@tensorflow/tfjs';
-import axios from 'axios';
 
 /*
 * Params for logging
@@ -9,10 +8,10 @@ import axios from 'axios';
 *  -> Batch num
 *  -> Runtime
 */
+
 class DistTensorflow {
   token;
   model;
-  http;
   batchSize;
   batchNo = 0;
   stopped = false;
@@ -22,13 +21,6 @@ class DistTensorflow {
   constructor(token, statsCallback) {
     this.token = token;
     this.statsCallback = statsCallback;
-
-    // Initialize axios instance
-    this.http = axios.create({
-		baseUrl: 'https://some-domain.com/api/',
-      timeout: 10000,
-    });
-
     this.model = await tf.loadLayersModel(‘path/to/model.json’);
 
     // Compile the model with default optimizer and loss
@@ -39,7 +31,7 @@ class DistTensorflow {
     });
   }
 
-  loadNextBatch() async {
+  async loadNextBatch() {
     // Load the next batch from the backend
     let res = await http.get('metadata');
 
@@ -50,29 +42,42 @@ class DistTensorflow {
     this.batchSize = batchShape[0];
 
     // Load the minibatch data
-    res = await http.get('batch', {responseType: 'arraybuffer'});
-    let batchArray = new UInt8Array(res.data);
+    res = await fetch('localhost:10200/data/batch', {
+      method: 'GET',
+      redirect: 'follow',
+    });
+
+    let batchArray = new UInt8Array(await res.arrayBuffer());
 
     // Load the minibatch labels
-    res = await http.get('label', {responseType: 'arraybuffer'});
-    let labelArray = new UInt8Array(res.data);
+    res = await fetch('localhost:10200/label/batch', {
+      method: 'GET',
+      redirect: 'follow',
+    });
+
+    let labelArray = new UInt8Array(await res.arrayBuffer());
 
     this.batchNo += 1;
     return {
-      "data": tf.tensor(batchArray, {shape: batchShape}),
-      "labels": tf.tensor(labelArray, {shape: labelShape})
+      "data": tf.tensor(batchArray, batchShape),
+      "labels": tf.tensor(labelArray, labelShape)
     };
   }
 
-  updateWeights() async {
+  async updateWeights() {
     let oldWeights = this.model.getWeights();
 
-    let res = await http.post('/weights', {
-      shape: oldWeights.shape,
-      data: await oldWeights.flatten().array()
+    let res = await fetch(`localhost:10300/params/${this.token}`, {
+      method: 'POST',
+      body: JSON.stringify({
+        shape: oldWeights.shape,
+        data: await oldWeights.flatten().array()
+      })
     });
 
-    let weights = tf.tensor(res.data.data, {shape: res.data.shape});
+    let resJSON = await res.json();
+
+    let weights = tf.tensor(resJSON.data, resJSON.shape);
 
     this.model.setWeights(weights);
   }
