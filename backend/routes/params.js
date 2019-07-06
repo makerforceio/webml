@@ -5,31 +5,31 @@ const tf = require('@tensorflow/tfjs-node');
 const router = express.Router();
 const jsonParser = bodyParser.json()
 
-const ALPHA = 0.95;
+const ALPHA = 0.9;
 
 let paramsMap = new Map();
 
-router.post('/update/:token', jsonParser, function(req, res) {
+router.post('/update/:token', jsonParser, async function(req, res) {
   let shape = req.body.shape;
   let rawWeights = req.body.data;
   const token = req.params.token;
 
-  let weights = tf.tensor(rawWeights, {shape: shape});
+  let weights = tf.tensor(rawWeights, shape);
 
   if(paramsMap.has(token)) {
     let oldWeights = paramsMap.get(token);
-    let newWeights = tf.movingAverage(oldWeights, weights, ALPHA);
+    let newWeights = weights.mul(tf.scalar(ALPHA)).add(oldWeights.mul(tf.scalar(1 - ALPHA)));
 
     res.send({
       shape: newWeights.shape,
-      data: newWeights.flatten().array()
+      data: await newWeights.flatten().array()
     });
   } else {
     paramsMap.set(token, weights);
 
     res.send({
       shape: weights.shape,
-      data: weights.flatten().array()
+      data: await weights.flatten().array()
     });
   }
 });
