@@ -15,11 +15,13 @@
 				placeholder="Enter session name" />
 		  </div>
 		  <div class="m-2">
-			  <label for="newSessionDialogFile">Drop a file here</label>
-			  <input
-				  id="newSessionDialogFile"
-				ref="fileloader"
-				type="file" />
+			  <DropArea @input="sessionModel = $event" placeholder="Drop model here" />
+		  </div>
+		  <div class="m-2">
+			  <DropArea @input="sessionData = $event" placeholder="Drop data here" />
+		  </div>
+		  <div class="m-2">
+			  <DropArea @input="session= $event" placeholder="Drop data here" />
 		  </div>
 	  </div>
     </div>

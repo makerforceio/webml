@@ -40,6 +40,7 @@
     <NewSessionDialog :show.sync="showNewSessionDialog" />
   </div>
 </template>
+
 <script>
 import Header from '~/components/common/Header.vue'
 import Cards from '~/components/common/Cards.vue'
@@ -60,7 +61,12 @@ export default {
   data() {
     return {
       showNewSessionDialog: false
-    }
+		models: [],
+    };
+},
+  created: function () {
+    // Initialize all the models
+    let res = fetch('localhost:10200/models')
   }
 }
 </script>
