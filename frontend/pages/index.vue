@@ -2,88 +2,189 @@
   <div>
     <div
       class="
-			head
+        head
 
-			bg-primary text-white
-			rounded-b-card
-			p-2"
+        bg-primary text-white
+        rounded-b-card
+        p-2"
     >
-      <div class="m-4">
-        <h1
-          class="
-					font-bold
-					text-4xl
-				"
-        >
-          Training title
-        </h1>
-        <div
-          class="
-					font-bold
-				"
-        >
-          By Author
+      <div class="max-w-4xl m-auto">
+        <div class="flex items-center">
+          <div class="flex-grow m-4">
+            <h1
+              class="
+          font-bold
+          text-4xl
+        "
+            >
+              Training title
+            </h1>
+            <div
+              class="
+          font-bold
+        "
+            >
+              By Author
+            </div>
+          </div>
+          <Button class="m-4">
+            <fa-icon size="2x" :icon="['far', 'pause']" />
+          </Button>
+        </div>
+        <div class="mx-4 my-8" title="Major graph">
+          <h2
+            class="
+			  font-medium"
+          >
+            Loss
+          </h2>
+          <trend
+            :data="major"
+            :gradient="gradient"
+            :height="200"
+            auto-draw
+            smooth
+          >
+          </trend>
         </div>
       </div>
-      <div class="m-4" title="Major graph">
-        <trend
-          :data="major"
-          :gradient="gradient"
-          :height="200"
-          auto-draw
-          smooth
-        >
-        </trend>
-      </div>
-      <div
-        class="
-				flex items-stretch
-				m-4"
-      >
-        <Button
-          class="
-					flex-1
-					bg-white
-					hover:bg-white
-					text-primary"
-          >Pause</Button
-        >
-      </div>
     </div>
-    <div class="p-2">
+    <div
+      class="
+  flex flex-wrap p-2
+        max-w-4xl m-auto
+    "
+    >
       <div
         class="
-				bg-white
-				rounded-card
-				shadow-md
-				m-4 p-4"
+    flex-grow
+    flex
+    flex-col
+        bg-white
+        rounded-card
+        shadow-md
+        m-4 py-4 px-6"
       >
         <h2
           class="
-					font-medium
-					mx-2"
+          font-medium"
         >
           Runtime
         </h2>
         <div
           class="
-					text-6xl font-bold
-					text-center"
+      flex-1
+      flex
+      justify-center
+      items-center
+          text-6xl font-bold
+          text-center"
         >
-          10:55
+          <span>10:55</span>
         </div>
       </div>
       <div
         class="
-				bg-white
-				rounded-card
-				shadow-md
-				m-4 p-4"
+    flex-grow
+    flex
+    flex-col
+        bg-white
+        rounded-card
+        shadow-md
+        m-4 py-4 px-6"
       >
         <h2
           class="
-					font-medium
-					mx-2"
+          font-medium"
+        >
+          Runtime
+        </h2>
+        <div
+          class="
+      flex-1
+      flex
+      justify-center
+      items-center
+          text-6xl font-bold
+          text-center"
+        >
+          <span>10:55</span>
+        </div>
+      </div>
+      <div
+        class="
+    flex-grow
+    flex
+    flex-col
+        bg-white
+        rounded-card
+        shadow-md
+        m-4 py-4 px-6"
+      >
+        <h2
+          class="
+          font-medium"
+        >
+          Runtime
+        </h2>
+        <div
+          class="
+      flex-1
+      flex
+      justify-center
+      items-center
+          text-6xl font-bold
+          text-center"
+        >
+          <span>10:55</span>
+        </div>
+      </div>
+      <div
+        class="
+    flex-grow
+        bg-white
+        rounded-card
+        shadow-md
+        m-4 py-4 px-6"
+      >
+        <h2
+          class="
+          font-medium
+          "
+        >
+          Epoch time
+        </h2>
+        <trend :data="major" :height="200" auto-draw smooth> </trend>
+      </div>
+      <div
+        class="
+    flex-grow
+        bg-white
+        rounded-card
+        shadow-md
+        m-4 py-4 px-6"
+      >
+        <h2
+          class="
+          font-medium
+          "
+        >
+          Epoch time
+        </h2>
+        <trend :data="major" :height="200" auto-draw smooth> </trend>
+      </div>
+      <div
+        class="
+    flex-grow
+        bg-white
+        rounded-card
+        shadow-md
+        m-4 py-4 px-6"
+      >
+        <h2
+          class="
+          font-medium
+          "
         >
           Epoch time
         </h2>
@@ -96,8 +197,8 @@
 <style>
 .head {
   background: linear-gradient(45deg, #ff6900, #ff994f);
-  padding-bottom: 8rem;
-  margin-bottom: -8rem;
+  padding-bottom: 6rem;
+  margin-bottom: -6rem;
 }
 </style>
 
