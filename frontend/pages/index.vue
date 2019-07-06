@@ -1,41 +1,19 @@
 <template>
   <div>
-    <div
-      class="
-        head
-
-        bg-primary text-white
-        rounded-b-card
-        p-2"
-    >
-      <div class="max-w-4xl m-auto">
-        <div class="flex items-center">
-          <div class="flex-grow m-4">
-            <h1
-              class="
-          font-bold
-          text-4xl
-        "
-            >
-              Training title
-            </h1>
-            <div
-              class="
-          font-bold
-        "
-            >
-              By Author
-            </div>
-          </div>
-          <Button class="m-4">
-            <fa-icon size="2x" :icon="['far', 'pause']" />
-          </Button>
-        </div>
+    <Header title="Session title" subtitle="By Author">
+      <template v-slot:buttons-left>
+        <button class="my-3 mr-4">
+          <fa-icon size="2x" :icon="['far', 'arrow-left']" />
+        </button>
+      </template>
+      <template v-slot:buttons-right>
+        <button class="my-3 ml-4">
+          <fa-icon size="2x" :icon="['far', 'pause']" />
+        </button>
+      </template>
+      <template v-slot:content>
         <div class="mx-4 my-8" title="Major graph">
-          <h2
-            class="
-			  font-medium"
-          >
+          <h2 class="font-medium">
             Loss
           </h2>
           <trend
@@ -47,150 +25,25 @@
           >
           </trend>
         </div>
-      </div>
-    </div>
-    <div
-      class="
-  flex flex-wrap p-2
-        max-w-4xl m-auto
-    "
-    >
-      <div
-        class="
-    flex-grow
-    flex
-    flex-col
-        bg-white
-        rounded-card
-        shadow-md
-        m-4 py-4 px-6"
-      >
-        <h2
-          class="
-          font-medium"
-        >
-          Runtime
-        </h2>
-        <div
-          class="
-      flex-1
-      flex
-      justify-center
-      items-center
-          text-6xl font-bold
-          text-center"
-        >
-          <span>10:55</span>
-        </div>
-      </div>
-      <div
-        class="
-    flex-grow
-    flex
-    flex-col
-        bg-white
-        rounded-card
-        shadow-md
-        m-4 py-4 px-6"
-      >
-        <h2
-          class="
-          font-medium"
-        >
-          Runtime
-        </h2>
-        <div
-          class="
-      flex-1
-      flex
-      justify-center
-      items-center
-          text-6xl font-bold
-          text-center"
-        >
-          <span>10:55</span>
-        </div>
-      </div>
-      <div
-        class="
-    flex-grow
-    flex
-    flex-col
-        bg-white
-        rounded-card
-        shadow-md
-        m-4 py-4 px-6"
-      >
-        <h2
-          class="
-          font-medium"
-        >
-          Runtime
-        </h2>
-        <div
-          class="
-      flex-1
-      flex
-      justify-center
-      items-center
-          text-6xl font-bold
-          text-center"
-        >
-          <span>10:55</span>
-        </div>
-      </div>
-      <div
-        class="
-    flex-grow
-        bg-white
-        rounded-card
-        shadow-md
-        m-4 py-4 px-6"
-      >
-        <h2
-          class="
-          font-medium
-          "
-        >
-          Epoch time
-        </h2>
-        <trend :data="major" :height="200" auto-draw smooth> </trend>
-      </div>
-      <div
-        class="
-    flex-grow
-        bg-white
-        rounded-card
-        shadow-md
-        m-4 py-4 px-6"
-      >
-        <h2
-          class="
-          font-medium
-          "
-        >
-          Epoch time
-        </h2>
-        <trend :data="major" :height="200" auto-draw smooth> </trend>
-      </div>
-      <div
-        class="
-    flex-grow
-        bg-white
-        rounded-card
-        shadow-md
-        m-4 py-4 px-6"
-      >
-        <h2
-          class="
-          font-medium
-          "
-        >
-          Epoch time
-        </h2>
-        <trend :data="major" :height="200" auto-draw smooth> </trend>
-      </div>
-    </div>
+      </template>
+    </Header>
+    <Cards>
+      <Card title="Elapsed">
+        <CenteredText class="text-4xl">
+          10m 45s
+        </CenteredText>
+      </Card>
+      <Card title="Elapsed">
+        <CenteredText class="text-4xl">
+          10:45
+        </CenteredText>
+      </Card>
+      <Card title="Elapsed">
+        <CenteredText class="text-4xl">
+          10000.1
+        </CenteredText>
+      </Card>
+    </Cards>
   </div>
 </template>
 
@@ -203,7 +56,10 @@
 </style>
 
 <script>
-import Button from '~/components/common/Button.vue'
+import Header from '~/components/common/Header.vue'
+import Cards from '~/components/common/Cards.vue'
+import Card from '~/components/common/Card.vue'
+import CenteredText from '~/components/common/CenteredText.vue'
 import trend from 'vuetrend'
 
 const gradient = ['#ffffff', '#ff974d']
@@ -211,7 +67,10 @@ const gradient = ['#ffffff', '#ff974d']
 export default {
   layout: 'client',
   components: {
-    Button,
+    Header,
+    Cards,
+    Card,
+    CenteredText,
     trend
   },
   data() {
