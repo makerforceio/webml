@@ -69,7 +69,7 @@ class DistTensorflow {
 
     let res = await http.post('/weights', {
       shape: oldWeights.shape,
-      data: oldWeights.flatten().array()
+      data: await oldWeights.flatten().array()
     });
 
     let weights = tf.tensor(res.data.data, {shape: res.data.shape});
