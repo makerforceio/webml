@@ -28,20 +28,38 @@
       </template>
     </Header>
     <Cards>
-      <Card title="Elapsed">
+      <Card subtitle="Elapsed">
         <CenteredText class="text-4xl">
           10m 45s
         </CenteredText>
       </Card>
-      <Card title="Elapsed">
+      <Card subtitle="Elapsed">
         <CenteredText class="text-4xl">
           10:45
         </CenteredText>
       </Card>
-      <Card title="Elapsed">
+      <Card subtitle="Elapsed">
         <CenteredText class="text-4xl">
           10000.1
         </CenteredText>
+      </Card>
+      <Card subtitle="Loss">
+        <trend
+          :data="major"
+          :height="200"
+          auto-draw
+          smooth
+        >
+        </trend>
+      </Card>
+      <Card subtitle="Loss">
+        <trend
+          :data="major"
+          :height="200"
+          auto-draw
+          smooth
+        >
+        </trend>
       </Card>
     </Cards>
   </div>
