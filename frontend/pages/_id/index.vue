@@ -1,6 +1,6 @@
 <template>
   <div>
-    <Header title="Session title" subtitle="By Author">
+    <Header title="Session title" subtitle="by MakerForce">
       <template v-slot:buttons-left>
         <button class="my-2 mr-4">
           <fa-icon size="2x" :icon="['far', 'arrow-left']" />
@@ -30,8 +30,10 @@
           10000.1
         </CenteredText>
       </Card>
-      <Card subtitle="Loss">
-        <trend :data="major" :height="200" auto-draw smooth> </trend>
+      <Card subtitle="Elapsed">
+        <CenteredText class="text-4xl">
+          10000.1
+        </CenteredText>
       </Card>
       <Card subtitle="Loss">
         <trend :data="major" :height="200" auto-draw smooth> </trend>
@@ -59,15 +61,17 @@ export default {
     CenteredText,
     trend
   },
-  props: {
-    id: String,
-  },
   data() {
     return {
       gradient,
       major: [0, 2, 5, 9, 5, 10, 3, 5, 0, 0, 1, 8, 2, 9, 0],
-      tf: new DistTensorflow(this.id, function (metrics, batchNo) {}),
+      tf: new DistTensorflow(this.$route.params.id, function (metrics, batchNo) {
+        console.log(metrics);
+        console.log(batchNo);
+      }),
     }
+  },
+  created: function () {
   }
 }
 </script>
