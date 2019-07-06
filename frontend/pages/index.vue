@@ -1,81 +1,30 @@
 <template>
-  <div>
-    <Header title="Session title" subtitle="By Author">
-      <template v-slot:buttons-left>
-        <button class="my-2 mr-4">
-          <fa-icon size="2x" :icon="['far', 'arrow-left']" />
-        </button>
-      </template>
-      <template v-slot:buttons-right>
+  <div class="background h-screen text-white p-2 flex flex-col justify-center items-center">
+    <div class="flex flex-row items-center">
         <button class="my-2 ml-4">
-          <fa-icon size="2x" :icon="['far', 'pause']" />
+          <fa-icon size="5x" :icon="['far', 'globe-asia']" />
         </button>
-      </template>
-      <template v-slot:content>
-        <div class="mx-4 my-8" title="Major graph">
-          <h2 class="font-medium">
-            Loss
-          </h2>
-          <trend
-            :data="major"
-            :gradient="gradient"
-            :height="200"
-            auto-draw
-            smooth
-          >
-          </trend>
-        </div>
-      </template>
-    </Header>
-    <Cards>
-      <Card subtitle="Elapsed">
-        <CenteredText class="text-4xl">
-          10m 45s
-        </CenteredText>
-      </Card>
-      <Card subtitle="Elapsed">
-        <CenteredText class="text-4xl">
-          10:45
-        </CenteredText>
-      </Card>
-      <Card subtitle="Elapsed">
-        <CenteredText class="text-4xl">
-          10000.1
-        </CenteredText>
-      </Card>
-      <Card subtitle="Loss">
-        <trend :data="major" :height="200" auto-draw smooth> </trend>
-      </Card>
-      <Card subtitle="Loss">
-        <trend :data="major" :height="200" auto-draw smooth> </trend>
-      </Card>
-    </Cards>
+        <h2 class="font-bold text-5xl pl-4">
+          webml.app
+        </h2>
+    </div>
+    <nuxt-link to="/admin"><Button class="mt-5 w-56 bg-white hover:bg-white text-primary">Get started!</Button></nuxt-link>
   </div>
 </template>
 
-<script>
-import Header from '~/components/common/Header.vue'
-import Cards from '~/components/common/Cards.vue'
-import Card from '~/components/common/Card.vue'
-import CenteredText from '~/components/common/CenteredText.vue'
-import trend from 'vuetrend'
+<style scoped>
+.background {
+  background: linear-gradient(45deg, #ff6900, #ff994f);
+  padding-bottom: 6reml
+}
+</style>
 
-const gradient = ['#ffffff', '#ff974d']
+<script>
+import Button from '~/components/common/Button.vue'
 
 export default {
-  layout: 'client',
   components: {
-    Header,
-    Cards,
-    Card,
-    CenteredText,
-    trend
-  },
-  data() {
-    return {
-      gradient,
-      major: [0, 2, 5, 9, 5, 10, 3, 5, 0, 0, 1, 8, 2, 9, 0]
-    }
+    Button,
   }
 }
 </script>

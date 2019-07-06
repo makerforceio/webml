@@ -66,24 +66,19 @@ export default {
   }),
   created: function() {
     // Initialize all the models and format them follow the data format above
-    fetch('http://localhost:10200/models')
-      .then(res => {
-        return res.json()
-      })
-      .then(body => {
-        return Promise.all(
-          body.models
-            .filter(modelName => modelName != 'parser')
-            .map(modelName => {
-              return fetch(`http://localhost:10201/params/${modelName}`).then(
-                res => res.text()
-              )
-            })
-        )
-      })
-      .then(models => {
-        this.models = models
-      })
+    fetch('http://localhost:10200/models').then((res) => {
+      return res.json();
+    }).then((body) => {
+      return Promise.all(body.models
+                        .filter(modelName => modelName != 'parser')
+                        .map((modelName) => {
+                          return fetch(`http://localhost:10201/params/${modelName}`)
+                            .then((res) => res.text())
+                            .then((loss) => { title: modelName, loss });
+                        }));
+    }).then((models) => {
+      this.models = models;
+    });
   }
 }
 </script>
