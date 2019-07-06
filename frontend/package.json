@@ -16,6 +16,7 @@
     "@nuxtjs/axios": "^5.3.6",
     "@tensorflow/tfjs": "^1.2.2",
     "cross-env": "^5.2.0",
+    "cuid": "^2.1.6",
     "koa": "^2.6.2",
     "nuxt": "^2.0.0",
     "vuetrend": "^0.3.4"
