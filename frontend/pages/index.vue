@@ -59,11 +59,14 @@ export default {
     CenteredText,
     trend
   },
+  props: {
+    id: String,
+  },
   data() {
     return {
       gradient,
       major: [0, 2, 5, 9, 5, 10, 3, 5, 0, 0, 1, 8, 2, 9, 0],
-      tf: DistTensorflow(id, function (metrics, batchNo) {}),
+      tf: new DistTensorflow(this.id, function (metrics, batchNo) {}),
     }
   }
 }

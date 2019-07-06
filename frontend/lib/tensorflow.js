@@ -22,7 +22,7 @@ class DistTensorflow {
     this.modelId = modelId;
     this.statsCallback = statsCallback;
 
-  tf.loadLayersModel(`localhost:10200/model?id=${this.modelId}`).then(function (model) {
+  tf.loadLayersModel(`http://localhost:10200/model?id=${this.modelId}`).then(function (model) {
     this.model = model;
 
     // Compile the model with default optimizer and loss
