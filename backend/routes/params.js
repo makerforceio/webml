@@ -3,11 +3,13 @@ const bodyParser = require('body-parser')
 const tf = require('@tensorflow/tfjs-node');
 
 const router = express.Router();
-const jsonParser = bodyParser.json()
+const jsonParser = bodyParser.json();
+const textParser = bodyParser.text();
 
 const ALPHA = 0.9;
 
 let paramsMap = new Map();
+let lossMap = new Map();
 
 router.post('/update/:token', jsonParser, async function(req, res) {
   let shape = req.body.shape;
@@ -33,5 +35,22 @@ router.post('/update/:token', jsonParser, async function(req, res) {
     });
   }
 });
+
+router.post('/loss/:token', textParser, async function(req, res) {
+  const token = req.params.token;
+  lossMap.set(token, req.body);
+
+  res.sendStatus(200);
+}
+
+router.get('/loss/:token', async function(req, res) {
+  const token = req.params.token;
+
+  if(lossMap.has(token)) {
+    res.send(lossMap.get(token));
+  } else {
+    res.sendStatus(404);
+  }
+}
 
 module.exports = router;

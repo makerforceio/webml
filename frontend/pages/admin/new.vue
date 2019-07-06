@@ -30,7 +30,8 @@ export default {
     trend
   },
   methods: {
-    onSubmit: async function (files, submitType) {
+    getUUID: (prefix) => prefix + '_' + Math.random().toString(36).substr(2, 9),
+    onSubmit: async function (model, files, submitType) {
       // let files = this.$refs.fileloader.files
 
       var url = (function(type) {
@@ -47,7 +48,9 @@ export default {
       })(submitType);
 
       for (var i = 0; i < files.length; i++) {
-        await fetch(url, {
+        let id = this.getUUID();
+
+        await fetch(`url?id=${this.id}&model=${this.model}`, {
           method: "PUT",
           redirect: "follow",
           body: files[i]

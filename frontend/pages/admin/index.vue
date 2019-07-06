@@ -1,6 +1,6 @@
 <template>
   <div>
-    <Header title="Sessions"></Header>
+    <Header title="Active Sessions"></Header>
     <Cards>
       <Card title="Hey 2" arrow>
         <div class="flex">
@@ -33,6 +33,7 @@
     </Cards>
   </div>
 </template>
+
 <script>
 import Header from '~/components/common/Header.vue'
 import Cards from '~/components/common/Cards.vue'
@@ -47,6 +48,13 @@ export default {
     Card,
     Subcard,
     CenteredText
+  },
+  data: () => {
+    models,
+  },
+  created: function () {
+    // Initialize all the models
+    let res = fetch('localhost:10200/models')
   }
 }
 </script>
