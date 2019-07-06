@@ -25,6 +25,7 @@ import trend from 'vuetrend'
 
 export default {
   layout: 'client',
+  props: [ 'type' ],
   components: {
     Header,
     trend
@@ -41,7 +42,7 @@ export default {
           case 'labels':
             return "localhost:10200/labels";
           case 'scripts':
-            return "localhost:10200/data_parse";
+            return "localhost:10200/data_parser";
           default:
             return "";
         }
