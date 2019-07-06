@@ -4,6 +4,7 @@ import (
   "io"
   "log"
   "net/http"
+  "net/url"
   "os"
   "strconv"
   "time"
@@ -51,9 +52,13 @@ func main() {
   // Routes
   router := httprouter.New()
   // Return minio presigned URLs
+  router.GET("/model", GetModel)
   router.POST("/model", UploadModel)
+  router.GET("/data", GetData)
   router.POST("/data", UploadData)
+  router.GET("/data_parser", GetDataParser)
   router.POST("/data_parser", UploadDataParser)
+  router.POST("/batch", BatchData)
 
   router.POST("/parse", TestParse)
 
@@ -75,7 +80,7 @@ func UploadModel(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
     }
   }
 
-  expiry := time.Second * 120;
+  expiry := time.Second * 120
   presignedURL, err := minioClient.PresignedPutObject(bucketName, "model", expiry)
   if err != nil {
     http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
@@ -95,7 +100,7 @@ func UploadData(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
     return
   }
 
-  expiry := time.Second * 120;
+  expiry := time.Second * 120
   presignedURL, err := minioClient.PresignedPutObject(bucketName, hash, expiry)
   if err != nil {
     http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
@@ -106,16 +111,91 @@ func UploadData(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
 }
 
 func UploadDataParser(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
-  hash := r.FormValue("hash")
+  id := r.FormValue("id")
 
-  expiry := time.Second * 120;
-  presignedURL, err := minioClient.PresignedPutObject("parser", hash, expiry)
+  expiry := time.Second * 120
+  presignedURL, err := minioClient.PresignedPutObject("parser", id, expiry)
   if err != nil {
     http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
 		return
   }
 
   w.Write([]byte(presignedURL.String()))
+}
+
+func GetModel(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
+  id := r.FormValue("id")
+  if id == "" {
+    http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
+    return
+  }
+
+  reqParams := make(url.Values)
+  expiry := time.Second * 120
+  presignedURL, err := minioClient.PresignedGetObject(id, "model", expiry, reqParams)
+  if err != nil {
+      http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
+      return
+  }
+
+  w.Write([]byte(presignedURL.String()))
+}
+
+func GetData(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
+  model := r.FormValue("model")
+  if model == "" {
+    http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
+    return
+  }
+
+  id := r.FormValue("id")
+  if id == "" {
+    http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
+    return
+  }
+
+  reqParams := make(url.Values)
+  expiry := time.Second * 120
+  presignedURL, err := minioClient.PresignedGetObject(model, id, expiry, reqParams)
+  if err != nil {
+      http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
+      return
+  }
+
+  w.Write([]byte(presignedURL.String()))
+}
+
+func GetDataParser(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
+  id := r.FormValue("id")
+  if id == "" {
+    http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
+    return
+  }
+
+  reqParams := make(url.Values)
+  expiry := time.Second * 120
+  presignedURL, err := minioClient.PresignedGetObject("parser", id, expiry, reqParams)
+  if err != nil {
+      http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
+      return
+  }
+
+  w.Write([]byte(presignedURL.String()))
+}
+
+func BatchData(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
+  dataParserId := r.FormValue("data_parser")
+  labelParserId := r.FormValue("label_parser")
+
+  modelId := r.FormValue("model_id")
+  dataId := r.FormValue("data_id")
+
+  if dataParserId == "" || labelParserId == "" || modelId == "" || dataId == "" {
+    http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
+    return
+  }
+
+  
 }
 
 func TestParse(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
