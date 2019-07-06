@@ -61,6 +61,8 @@ func main() {
   router.POST("/data", UploadData)
   router.GET("/labels", GetLabels)
   router.POST("/labels", UploadLabels)
+  router.GET("/data/batch", GetBatchData)
+  router.GET("/labels/batch", GetBatchLabels)
   router.GET("/data_parser", GetDataParser)
   router.POST("/data_parser", UploadDataParser)
   router.POST("/batch", BatchData)
@@ -206,6 +208,54 @@ func GetLabels(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
   reqParams := make(url.Values)
   expiry := time.Second * 120
   presignedURL, err := minioClient.PresignedGetObject(model, "label:" + id, expiry, reqParams)
+  if err != nil {
+      http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
+      return
+  }
+
+  w.Write([]byte(presignedURL.String()))
+}
+
+func GetBatchData(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
+  model := r.FormValue("model")
+  if model == "" {
+    http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
+    return
+  }
+
+  id := r.FormValue("id")
+  if id == "" {
+    http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
+    return
+  }
+
+  reqParams := make(url.Values)
+  expiry := time.Second * 120
+  presignedURL, err := minioClient.PresignedGetObject(model, "batch:data:" + id, expiry, reqParams)
+  if err != nil {
+      http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
+      return
+  }
+
+  w.Write([]byte(presignedURL.String()))
+}
+
+func GetBatchLabels(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
+  model := r.FormValue("model")
+  if model == "" {
+    http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
+    return
+  }
+
+  id := r.FormValue("id")
+  if id == "" {
+    http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
+    return
+  }
+
+  reqParams := make(url.Values)
+  expiry := time.Second * 120
+  presignedURL, err := minioClient.PresignedGetObject(model, "batch:label:" + id, expiry, reqParams)
   if err != nil {
       http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
       return
