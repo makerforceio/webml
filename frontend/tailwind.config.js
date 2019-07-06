@@ -4,7 +4,11 @@ module.exports = {
     extend: {
 		colors: {
 			primary: '#FF6900',
-		}
+			'primary-dark': '#804B26',
+		},
+		borderRadius: {
+			'card': '1rem',
+		},
 	}
   },
   variants: {}
