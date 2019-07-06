@@ -1,16 +1,37 @@
 <template>
   <div>
+    <Header title="New session" subtitle="" class="h-screen rounded-none">
+      <template v-slot:buttons-left>
+        <button class="my-3 mr-4">
+          <fa-icon size="2x" :icon="['far', 'arrow-left']" />
+        </button>
+      </template>
+      <template v-slot:content>
+        <div class="mx-4 my-8" title="Major graph">
+          <h2 class="font-medium">
+            Loss
+          </h2>
+        </div>
+      </template>
+    </Header>
     <input v-model="sessionName", placeholder="Enter session name">
     <input ref="fileloader" type="file" webkitdirectory mozdirectory/>
   </div>
 </template>
 
 <script>
+import Header from '~/components/common/Header.vue'
+import trend from 'vuetrend'
+
 export default {
-  layout: 'default',
+  layout: 'client',
+  components: {
+    Header,
+    trend
+  },
   methods: {
-    onSubmit: async function (submitType) {
-      let files = this.$refs.fileloader.files
+    onSubmit: async function (files, submitType) {
+      // let files = this.$refs.fileloader.files
 
       var url = (function(type) {
         switch(type) {
