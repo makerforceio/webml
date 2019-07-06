@@ -5,7 +5,7 @@ const paramsRouter = require('./routes/params');
 const adminRouter = require('./routes/params');
 
 // Configuring port
-const port = process.env.PORT || '3000';
+const port = process.env.PORT || '10201';
 
 //  Creating the app
 const app = express();
@@ -15,4 +15,3 @@ app.use('/params', paramsRouter);
 
 // Starting the app
 app.listen(port, () => console.log(`App listening on port ${port}!`))
-

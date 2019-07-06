@@ -41,7 +41,7 @@ router.post('/loss/:token', textParser, async function(req, res) {
   lossMap.set(token, req.body);
 
   res.sendStatus(200);
-}
+});
 
 router.get('/loss/:token', async function(req, res) {
   const token = req.params.token;
@@ -51,6 +51,6 @@ router.get('/loss/:token', async function(req, res) {
   } else {
     res.sendStatus(404);
   }
-}
+});
 
 module.exports = router;
