@@ -1,8 +1,14 @@
 <template>
   <div>
-    <Header title="Active Sessions"></Header>
+    <Header title="Sessions">
+      <template v-slot:buttons-right>
+        <button class="my-2 ml-4" @click="showNewSessionDialog = true">
+          <fa-icon size="2x" :icon="['far', 'plus']" />
+        </button>
+      </template>
+    </Header>
     <Cards>
-      <Card v-for="model in models" :title="model.title" arrow>
+      <Card v-for="model in models" :title="model.title" :key="model.title" arrow>
         <div class="flex">
           <Subcard subtitle="Elapsed">
             <CenteredText class="text-4xl">
@@ -17,6 +23,7 @@
         </div>
       </Card>
     </Cards>
+    <NewSessionDialog :show.sync="showNewSessionDialog" />
   </div>
 </template>
 
@@ -26,6 +33,7 @@ import Cards from '~/components/common/Cards.vue'
 import Card from '~/components/common/Card.vue'
 import Subcard from '~/components/common/Subcard.vue'
 import CenteredText from '~/components/common/CenteredText.vue'
+import NewSessionDialog from '~/components/admin/NewSessionDialog.vue'
 
 export default {
   components: {
@@ -33,9 +41,11 @@ export default {
     Cards,
     Card,
     Subcard,
-    CenteredText
+    CenteredText,
+    NewSessionDialog
   },
   data: () => ({
+    showNewSessionDialog: false,
     models: [
       {
         title: "Hello",
