@@ -10,7 +10,7 @@ import * as tf from '@tensorflow/tfjs';
 */
 
 class DistTensorflow {
-  token;
+  modelId;
   model;
   batchSize;
   batchNo = 0;
@@ -18,10 +18,10 @@ class DistTensorflow {
 
   statsCallback;
 
-  constructor(token, statsCallback) {
-    this.token = token;
+  constructor(modelId, statsCallback) {
+    this.modelId = modelId;
     this.statsCallback = statsCallback;
-    this.model = await tf.loadLayersModel(‘path/to/model.json’);
+    this.model = await tf.loadLayersModel(`localhost:10200/model?id=${this.modelId}`);
 
     // Compile the model with default optimizer and loss
     this.model.compile({
@@ -42,7 +42,7 @@ class DistTensorflow {
     this.batchSize = batchShape[0];
 
     // Load the minibatch data
-    res = await fetch('localhost:10200/data/batch', {
+    res = await fetch(`localhost:10200/data/batch?model=${this.modelId}`, {
       method: 'GET',
       redirect: 'follow',
     });
@@ -50,7 +50,7 @@ class DistTensorflow {
     let batchArray = new UInt8Array(await res.arrayBuffer());
 
     // Load the minibatch labels
-    res = await fetch('localhost:10200/label/batch', {
+    res = await fetch(`localhost:10200/label/batch?model=${this.modelId}`, {
       method: 'GET',
       redirect: 'follow',
     });
@@ -67,7 +67,7 @@ class DistTensorflow {
   async updateWeights() {
     let oldWeights = this.model.getWeights();
 
-    let res = await fetch(`localhost:10300/params/${this.token}`, {
+    let res = await fetch(`localhost:10300/params/${this.modelId}`, {
       method: 'POST',
       body: JSON.stringify({
         shape: oldWeights.shape,
