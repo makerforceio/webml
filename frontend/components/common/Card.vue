@@ -9,7 +9,7 @@
         <fa-icon :icon="['far', 'chevron-right']" />
       </div>
     </div>
-    <div class="py-4 pt-0">
+    <div class="flex-grow flex items-center py-4 pt-0">
       <slot></slot>
     </div>
   </div>

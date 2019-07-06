@@ -21,7 +21,10 @@
 			  <DropArea @input="sessionData = $event" placeholder="Drop data here" />
 		  </div>
 		  <div class="m-2">
-			  <DropArea @input="session= $event" placeholder="Drop data here" />
+			  <DropArea @input="sessionLabels = $event" placeholder="Drop labels here" />
+		  </div>
+		  <div class="m-2">
+			  <DropArea @input="sessionDataParser = $event" placeholder="Drop data parser here" />
 		  </div>
 	  </div>
     </div>
