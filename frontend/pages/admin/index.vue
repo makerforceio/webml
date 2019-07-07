@@ -57,8 +57,9 @@ export default {
 	methods: {
 	fetch() {
     // Initialize all the models and format them follow the data format above
-	  const base = process.env.NUXT_ENV_BACKEND2_URL || 'http://localhost:10200';
-    fetch(base + '/models').then((res) => {
+	  const base = process.env.NUXT_ENV_BACKEND1_URL || 'http://localhost:10201';
+	  const base2 = process.env.NUXT_ENV_BACKEND2_URL || 'http://localhost:10200';
+    fetch(base2 + '/models').then((res) => {
       return res.json();
     }).then((body) => {
       return Promise.all(body.models

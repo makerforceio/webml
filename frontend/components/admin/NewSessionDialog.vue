@@ -109,11 +109,22 @@ export default {
 					redirect: 'follow',
 					body: this.sessionLabels,
 				});
-				await fetch(base + '/data_parser?model=' + modelid + '&id=' + dataparserid, {
+				await fetch(base + '/data_parser?model=' + modelid + '&id=' + modelid, {
 					method: 'PUT',
 					redirect: 'follow',
 					body: this.sessionDataParser,
 				});
+		await fetch(base + '/metadata?model=' + modelid, {
+			method: 'PUT',
+			redirect: 'follow',
+			body: JSON.stringify({
+				name: this.sessionName,
+			}),
+		});
+		await fetch(base + '/batch', {
+			method: 'POST',
+			redirect: 'follow',
+		});
 		  this.$emit('update:show', false);
 		  this.$emit('needRefresh');
     }
