@@ -7,6 +7,7 @@ import (
 	"encoding/json"
 	"io"
 	"log"
+  "math/big"
 	"net/http"
 	"net/url"
 	"os"
@@ -67,6 +68,7 @@ func main() {
 	router.GET("/labels/batch", Cors(GetBatchLabels))
 	router.GET("/data_parser", Cors(GetDataParser))
 	router.PUT("/data_parser", Cors(UploadDataParser))
+  router.GET("/batch", Cors(GetBatch))
 	router.POST("/batch", Cors(BatchData))
 	router.GET("/metadata", Cors(GetMetadata))
 	router.PUT("/metadata", Cors(UploadMetadata))
@@ -283,6 +285,27 @@ func GetMetadata(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
 	}
 
 	http.Redirect(w, r, presignedURL.String(), http.StatusTemporaryRedirect)
+}
+
+func GetBatch(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
+  model := r.FormValue("model")
+  if model == "" {
+		http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
+		return
+	}
+
+  ids := make([]string, 0)
+  doneCh := make(chan struct{})
+  defer close(doneCh)
+  objectsCh := minioClient.ListObjectsV2(model, "batch:data:", true, doneCh)
+  for object := range objectsCh {
+    if object.Err == nil {
+      ids = append(ids, object.Key)
+    }
+  }
+
+  n, _ := rand.Int(rand.Reader, big.NewInt(int64(len(ids))))
+  w.Write([]byte(ids[n.Int64()]))
 }
 
 func GetBatchData(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
