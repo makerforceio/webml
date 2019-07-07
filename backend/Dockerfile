@@ -3,5 +3,5 @@ FROM node:latest
 WORKDIR /app
 COPY . /app
 
-RUN npm install
+RUN yarn install
 CMD ["node", "index.js"]
