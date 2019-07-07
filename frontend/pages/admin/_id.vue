@@ -2,9 +2,9 @@
   <div>
     <Header title="Session title" subtitle="By Author">
       <template v-slot:buttons-left>
-        <button class="my-2 mr-4">
+		  <router-link class="my-2 mr-4" :to="{ name: 'admin' }">
           <fa-icon size="2x" :icon="['far', 'arrow-left']" />
-        </button>
+        </router-link>
       </template>
       <template v-slot:buttons-right>
         <button class="my-2 ml-4">
@@ -16,14 +16,8 @@
       </template>
       <template v-slot:content>
         <div class="mx-4 my-8" title="Major graph">
-          <trend
-            :data="major"
-            :gradient="gradient"
-            :height="200"
-            auto-draw
-            smooth
-          >
-          </trend>
+			<div class="font-medium">Share this link</div>
+			<div class="font-bold text-xl">{{ shareLink }}</div>
         </div>
       </template>
     </Header>
@@ -81,6 +75,12 @@ export default {
     CenteredText,
     trend
   },
+	computed: {
+		
+		shareLink() {
+			return "https://staging.webml.app/" + this.$route.params.id;
+		},
+	},
   data() {
     return {
       gradient,

@@ -1,0 +1,37 @@
+version: '3'
+
+networks:
+  http_network:
+    external: true
+
+services:
+  backend:
+    build: backend
+    restart: always
+    networks:
+      - http_network
+    labels:
+      - "traefik.enable=true"
+      - "traefik.frontend.rule=Host:staging.webml.app;PathPrefixStrip:/backend/"
+      - "traefik.port=10201"
+  backend2:
+    build: backend2
+    restart: always
+    networks:
+      - http_network
+    labels:
+      - "traefik.enable=true"
+      - "traefik.frontend.rule=Host:staging.webml.app;PathPrefixStrip:/backend2/"
+      - "traefik.port=10200"
+  frontend:
+    build: frontend
+    restart: always
+    networks:
+      - http_network
+    environment:
+      - NUXT_HOST=0.0.0.0
+    labels:
+      - "traefik.enable=true"
+      - "traefik.frontend.rule=Host:staging.webml.app"
+      - "traefik.port=3000"
+

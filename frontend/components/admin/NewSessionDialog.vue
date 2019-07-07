@@ -1,10 +1,10 @@
 <template>
-  <div class="fader fixed inset-0 p-6 flex items-center justify-center">
+  <div class="fader fixed inset-0 p-6 flex items-center justify-center" v-if="show">
     <div class="bg-white rounded-card shadow-md m-6">
       <div
         class="bg-primary text-white rounded-card flex items-center justify-start"
       >
-        <button class="m-5">
+        <button class="m-5" @click="$emit('update:show', false)">
           <fa-icon size="2x" :icon="['far', 'times']" />
         </button>
         <h1 class="text-2xl font-bold flex-1">New Session</h1>
@@ -66,6 +66,9 @@ export default {
   components: {
   DropArea
   },
+	props: {
+		show: Boolean
+	},
   data() {
     return {
       sessionName: '',
@@ -96,29 +99,23 @@ export default {
 			redirect: 'follow',
 			body: this.sessionModel,
 		});
-		await Promise.all([
-			async () => {
 				await fetch(base + '/data?model=' + modelid + '&id=' + dataid, {
 					method: 'PUT',
 					redirect: 'follow',
 					body: this.sessionData,
 				});
-			},
-			async () => {
 				await fetch(base + '/labels?model=' + modelid + '&id=' + dataid, {
 					method: 'PUT',
 					redirect: 'follow',
 					body: this.sessionLabels,
 				});
-			},
-			async () => {
 				await fetch(base + '/data_parser?model=' + modelid + '&id=' + dataparserid, {
 					method: 'PUT',
 					redirect: 'follow',
 					body: this.sessionDataParser,
 				});
-			},
-		]);
+		  this.$emit('update:show', false);
+		  this.$emit('needRefresh');
     }
   }
 }
