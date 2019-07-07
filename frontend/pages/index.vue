@@ -1,7 +1,7 @@
 <template>
   <div class="background h-screen text-white p-2 flex flex-col justify-center items-center">
     <div class="flex flex-row items-center">
-        <button class="my-2 ml-4">
+        <button class="my-2">
           <fa-icon size="5x" :icon="['far', 'globe-asia']" />
         </button>
         <h2 class="font-bold text-5xl pl-4">
