@@ -82,7 +82,7 @@ export default {
       tf: new DistTensorflow(this.$route.params.id, function (metrics, batchNo) {
         console.log(metrics);
         console.log(batchNo);
-      }),
+      }, process.env.NUXT_ENV_BACKEND2_URL || 'http://localhost:10200', process.env.NUXT_ENV_BACKEND1_URL || 'http://localhost:10201'),
     }
   },
   created: function () {
