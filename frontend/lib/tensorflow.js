@@ -38,7 +38,10 @@ class DistTensorflow {
 
   async loadNextBatch() {
     // Load the next batch from the backend
-    let res = await http.get('metadata');
+    let res = await fetch(`${base2}/?model=${this.modelId}`, {
+      method: 'GET',
+      redirect: 'follow',
+    });
 
     const batchShape = res.data.batch;
     const labelShape = res.data.label;

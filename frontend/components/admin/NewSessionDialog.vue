@@ -16,7 +16,7 @@
         <div class="m-4">
           <input
             class="text-2xl font-bold"
-            v-model="sessionName"
+            v-model="sessionTitle"
             placeholder="Enter session name"
           />
         </div>
@@ -71,7 +71,7 @@ export default {
 	},
   data() {
     return {
-      sessionName: '',
+      sessionTitle: '',
 		sessionModel: null,
 	sessionData: null,
 		sessionLabels: null,
@@ -84,7 +84,7 @@ export default {
       // let files = this.$refs.fileloader.files
 
 		// validate
-		if (!this.sessionName || !this.sessionModel || !this.sessionData || !this.sessionLabels || !this.sessionDataParser) {
+		if (!this.sessionTitle || !this.sessionModel || !this.sessionData || !this.sessionLabels || !this.sessionDataParser) {
 			return;
 		}
 
@@ -118,10 +118,10 @@ export default {
 			method: 'PUT',
 			redirect: 'follow',
 			body: JSON.stringify({
-				name: this.sessionName,
+				title: this.sessionTitle,
 			}),
 		});
-		await fetch(base + '/batch', {
+		  await fetch(base + '/batch?model_id=' + modelid + '&data_id=' + dataid + '&batch_size=500', {
 			method: 'POST',
 			redirect: 'follow',
 		});

@@ -1,11 +1,6 @@
 <template>
   <div>
     <Header :title="title" subtitle="by MakerForce">
-      <template v-slot:buttons-left>
-        <button class="my-2 mr-4">
-          <fa-icon size="2x" :icon="['far', 'arrow-left']" />
-        </button>
-      </template>
       <template v-slot:buttons-right>
         <button v-if="running" class="my-2 ml-4" @click="toggleRunning">
           <fa-icon size="2x" :icon="['far', 'pause']" />
@@ -15,7 +10,7 @@
         </button>
       </template>
       <template v-slot:content>
-        <div class="mx-3 my-6" title="Loss graph">
+        <div class="mx-3 my-6">
           <h2 class="font-medium">
           </h2>
           <trend
@@ -26,6 +21,10 @@
             smooth
           >
           </trend>
+        </div>
+        <div class="mx-4 my-8">
+			<div class="font-medium">Share this link</div>
+			<div class="font-bold text-xl">{{ shareLink }}</div>
         </div>
       </template>
     </Header>
@@ -73,11 +72,17 @@ export default {
     CenteredText,
     trend
   },
+	computed: {
+		
+		shareLink() {
+			return "https://staging.webml.app/" + this.$route.params.id;
+		},
+	},
   data() {
     return {
       running: false,
       gradient,
-      title: "MNIST",
+      title: "",
       major: [0, 2, 5, 9, 5, 10, 3, 5, 0, 0, 1, 8, 2, 9, 0],
       tf: new DistTensorflow(this.$route.params.id, function (metrics, batchNo) {
         console.log(metrics);
@@ -88,7 +93,7 @@ export default {
   created: function () {
     const base = process.env.NUXT_ENV_BACKEND2_URL || 'http://localhost:10200';
     const id = this.$route.params.id;
-    fetch(`${base}/metadata`).then(() => {
+	  fetch(`${base}/metadata?model=${id}`).then(() => {
       return res.json();
     }).then((body) => {
       this.title = body.title;
