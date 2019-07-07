@@ -1,5 +1,5 @@
 <template>
-  <div class="flex-grow flex flex-col bg-white rounded-card shadow-md m-4">
+	<div class="flex-grow flex flex-col bg-white rounded-card shadow-md m-4" @click="$router.push(to)">
     <div class="flex items-center">
       <div class="flex-grow py-4 px-6">
         <h1 v-if="title" class="font-bold text-2xl">{{ title }}</h1>
@@ -20,7 +20,8 @@ export default {
   props: {
     title: String,
     subtitle: String,
-    arrow: Boolean
+    arrow: Boolean,
+	  to: Object,
   }
 }
 </script>

@@ -13,8 +13,9 @@
         :title="model.title"
         :key="model.title"
         arrow
+		:to="{ name: 'admin-id', params: { id: model.id } }"
       >
-        <div class="flex">
+	  <div class="flex">
           <Subcard subtitle="Elapsed">
             <CenteredText class="text-4xl">
               {{ model.elapsed }}
@@ -28,7 +29,7 @@
         </div>
       </Card>
     </Cards>
-    <NewSessionDialog :show.sync="showNewSessionDialog" />
+    <NewSessionDialog :show.sync="showNewSessionDialog" @needsRefresh="fetch" />
   </div>
 </template>
 
@@ -51,20 +52,10 @@ export default {
   },
   data: () => ({
     showNewSessionDialog: false,
-    models: [
-      {
-        title: 'Hello',
-        elapsed: '10:43.4',
-        loss: 43
-      },
-      {
-        title: 'Hello',
-        elapsed: '10:43.4',
-        loss: 43
-      }
-    ]
+    models: []
   }),
-  created: function() {
+	methods: {
+	fetch() {
     // Initialize all the models and format them follow the data format above
 	  const base = process.env.NUXT_ENV_BACKEND2_URL || 'http://localhost:10200';
     fetch(base + '/models').then((res) => {
@@ -73,13 +64,17 @@ export default {
       return Promise.all(body.models
                         .filter(modelName => modelName != 'parser')
                         .map((modelName) => {
-							return fetch(`${base}/params/${modelName}`)
+							return fetch(`${base}/params/loss/${modelName}`)
                             .then((res) => res.text())
-                            .then((loss) => { title: modelName, loss });
+                            .then((loss) => ({ id: modelName, title: modelName, loss }));
                         }));
     }).then((models) => {
       this.models = models;
     });
+	}
+	},
+  created() {
+	  this.fetch();
   }
 }
 </script>
