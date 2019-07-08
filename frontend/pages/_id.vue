@@ -5,33 +5,35 @@
         <button v-if="running" class="my-2 ml-4" @click="toggleRunning">
           <fa-icon size="2x" :icon="['far', 'pause']" />
         </button>
+        <button v-if="completed" class="my-2 ml-4" @click="toggleRunning">
+        </button>
         <button v-else class="my-2 ml-4" @click="toggleRunning">
           <fa-icon size="2x" :icon="['far', 'play']" />
         </button>
       </template>
       <template v-slot:content>
         <div class="mx-3 my-6">
-          <h2 class="font-medium">
-          </h2>
+          <h2 class="font-medium">Loss</h2>
           <trend
             :data="major"
             :gradient="gradient"
             :height="200"
+			:width="400"
             auto-draw
             smooth
           >
           </trend>
         </div>
         <div class="mx-4 my-8">
-			<div class="font-medium">Share this link</div>
-			<div class="font-bold text-xl">{{ shareLink }}</div>
+          <div class="font-medium">Share this link</div>
+          <div class="font-bold text-xl">{{ shareLink }}</div>
         </div>
       </template>
     </Header>
     <Cards>
       <Card subtitle="Elapsed time">
         <CenteredText class="text-4xl">
-          10m 45s
+		Completed
         </CenteredText>
       </Card>
       <Card subtitle="Loss">
@@ -41,12 +43,12 @@
       </Card>
       <Card subtitle="Batch No.">
         <CenteredText class="text-4xl">
-          20
+          468
         </CenteredText>
       </Card>
       <Card subtitle="Accuracy">
         <CenteredText class="text-4xl">
-          67%
+          87%
         </CenteredText>
       </Card>
     </Cards>
@@ -59,7 +61,7 @@ import Cards from '~/components/common/Cards.vue'
 import Card from '~/components/common/Card.vue'
 import CenteredText from '~/components/common/CenteredText.vue'
 import trend from 'vuetrend'
-import DistTensorflow from '~/lib/tensorflow.js';
+import DistTensorflow from '~/lib/tensorflow.js'
 
 const gradient = ['#ffffff', '#ff974d']
 
@@ -72,38 +74,44 @@ export default {
     CenteredText,
     trend
   },
-	computed: {
-		
-		shareLink() {
-			return "https://staging.webml.app/" + this.$route.params.id;
-		},
-	},
+  computed: {
+    shareLink() {
+      return 'https://staging.webml.app/' + this.$route.params.id
+    }
+  },
   data() {
     return {
       running: false,
       gradient,
-      title: "",
-      major: [0, 2, 5, 9, 5, 10, 3, 5, 0, 0, 1, 8, 2, 9, 0],
-      tf: new DistTensorflow(this.$route.params.id, function (metrics, batchNo) {
-        console.log(metrics);
-        console.log(batchNo);
-      }, process.env.NUXT_ENV_BACKEND2_URL || 'http://localhost:10200', process.env.NUXT_ENV_BACKEND1_URL || 'http://localhost:10201'),
+      title: 'MNIST',
+      major: [0, 1, 1, 2, 5, 6, 7, 8, 10, 21, 30, 45, 50, 52, 53],
+      tf: new DistTensorflow(
+        this.$route.params.id,
+        function(metrics, batchNo) {
+          console.log(metrics)
+          console.log(batchNo)
+        },
+        process.env.NUXT_ENV_BACKEND2_URL || 'http://localhost:10200',
+        process.env.NUXT_ENV_BACKEND1_URL || 'http://localhost:10201'
+      )
     }
   },
-  created: function () {
-    const base = process.env.NUXT_ENV_BACKEND2_URL || 'http://localhost:10200';
-    const id = this.$route.params.id;
-	  fetch(`${base}/metadata?model=${id}`).then(() => {
-      return res.json();
-    }).then((body) => {
-      this.title = body.title;
-    });
+  created: function() {
+    const base = process.env.NUXT_ENV_BACKEND2_URL || 'http://localhost:10200'
+    const id = this.$route.params.id
+    fetch(`${base}/metadata?model=${id}`)
+      .then(() => {
+        return res.json()
+      })
+      .then(body => {
+        this.title = body.title
+      })
   },
   methods: {
-    toggleRunning: function () {
-      (this.running) ? console.log("stop") : console.log("start");
-      this.running = !this.running;
+    toggleRunning: function() {
+      this.running ? console.log('stop') : console.log('start')
+      this.running = !this.running
     }
-  },
+  }
 }
 </script>

@@ -1,5 +1,8 @@
 <template>
-  <div class="fader fixed inset-0 p-6 flex items-center justify-center" v-if="show">
+  <div
+    class="fader fixed inset-0 p-6 flex items-center justify-center"
+    v-if="show"
+  >
     <div class="bg-white rounded-card shadow-md m-6">
       <div
         class="bg-primary text-white rounded-card flex items-center justify-start"
@@ -60,73 +63,86 @@
 </style>
 
 <script>
-import DropArea from '~/components/common/DropArea.vue';
-import cuid from 'cuid';
+import DropArea from '~/components/common/DropArea.vue'
+import cuid from 'cuid'
 export default {
   components: {
-  DropArea
+    DropArea
   },
-	props: {
-		show: Boolean
-	},
+  props: {
+    show: Boolean
+  },
   data() {
     return {
       sessionTitle: '',
-		sessionModel: null,
-	sessionData: null,
-		sessionLabels: null,
-		sessionDataParser: null,
-
+      sessionModel: null,
+      sessionData: null,
+      sessionLabels: null,
+      sessionDataParser: null
     }
   },
   methods: {
-	  async submit () {
+    async submit() {
       // let files = this.$refs.fileloader.files
 
-		// validate
-		if (!this.sessionTitle || !this.sessionModel || !this.sessionData || !this.sessionLabels || !this.sessionDataParser) {
-			return;
-		}
+      // validate
+      if (
+        !this.sessionTitle ||
+        !this.sessionModel ||
+        !this.sessionData ||
+        !this.sessionLabels ||
+        !this.sessionDataParser
+      ) {
+        return
+      }
 
-		// TODO: create meta.json
+      // TODO: create meta.json
 
-		const base = process.env.NUXT_ENV_BACKEND2_URL || 'http://localhost:10200';
-		  const modelid = cuid();
-		  const dataid = cuid();
-		  const dataparserid = cuid();
-		await fetch(base + '/model?id=' + modelid, {
-			method: 'PUT',
-			redirect: 'follow',
-			body: this.sessionModel,
-		});
-				await fetch(base + '/data?model=' + modelid + '&id=' + dataid, {
-					method: 'PUT',
-					redirect: 'follow',
-					body: this.sessionData,
-				});
-				await fetch(base + '/labels?model=' + modelid + '&id=' + dataid, {
-					method: 'PUT',
-					redirect: 'follow',
-					body: this.sessionLabels,
-				});
-				await fetch(base + '/data_parser?model=' + modelid + '&id=' + modelid, {
-					method: 'PUT',
-					redirect: 'follow',
-					body: this.sessionDataParser,
-				});
-		await fetch(base + '/metadata?model=' + modelid, {
-			method: 'PUT',
-			redirect: 'follow',
-			body: JSON.stringify({
-				title: this.sessionTitle,
-			}),
-		});
-		  await fetch(base + '/batch?model_id=' + modelid + '&data_id=' + dataid + '&batch_size=500', {
-			method: 'POST',
-			redirect: 'follow',
-		});
-		  this.$emit('update:show', false);
-		  this.$emit('needRefresh');
+      const base = process.env.NUXT_ENV_BACKEND2_URL || 'http://localhost:10200'
+      const modelid = cuid()
+      const dataid = cuid()
+      const dataparserid = cuid()
+      await fetch(base + '/model?id=' + modelid, {
+        method: 'PUT',
+        redirect: 'follow',
+        body: this.sessionModel
+      })
+      await fetch(base + '/data?model=' + modelid + '&id=' + dataid, {
+        method: 'PUT',
+        redirect: 'follow',
+        body: this.sessionData
+      })
+      await fetch(base + '/labels?model=' + modelid + '&id=' + dataid, {
+        method: 'PUT',
+        redirect: 'follow',
+        body: this.sessionLabels
+      })
+      await fetch(base + '/data_parser?model=' + modelid + '&id=' + modelid, {
+        method: 'PUT',
+        redirect: 'follow',
+        body: this.sessionDataParser
+      })
+      await fetch(base + '/metadata?model=' + modelid, {
+        method: 'PUT',
+        redirect: 'follow',
+        body: JSON.stringify({
+          title: this.sessionTitle
+        })
+      })
+      await fetch(
+        base +
+          '/batch?model_id=' +
+          modelid +
+          '&data_id=' +
+          dataid +
+          '&batch_size=500',
+        {
+          method: 'POST',
+          redirect: 'follow'
+        }
+      )
+      this.$emit('update:show', false)
+      this.$emit('needRefresh')
     }
   }
 }

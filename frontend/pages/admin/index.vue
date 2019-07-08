@@ -13,9 +13,9 @@
         :title="model.title"
         :key="model.title"
         arrow
-		:to="{ name: 'admin-id', params: { id: model.id } }"
+        :to="{ name: 'admin-id', params: { id: model.id } }"
       >
-	  <div class="flex">
+        <div class="flex">
           <Subcard subtitle="Elapsed">
             <CenteredText class="text-4xl">
               {{ model.elapsed }}
@@ -52,30 +52,45 @@ export default {
   },
   data: () => ({
     showNewSessionDialog: false,
-    models: []
+	  models: [{
+		title: 'MNIST',
+		  id: 'cjxsamxuj0000245zyy4smkw2',
+		elapsed: 'Completed',
+		  loss: 0.567,
+	  }]
   }),
-	methods: {
-	fetch() {
-    // Initialize all the models and format them follow the data format above
-	  const base = process.env.NUXT_ENV_BACKEND1_URL || 'http://localhost:10201';
-	  const base2 = process.env.NUXT_ENV_BACKEND2_URL || 'http://localhost:10200';
-    fetch(base2 + '/models').then((res) => {
-      return res.json();
-    }).then((body) => {
-      return Promise.all(body.models
-                        .filter(modelName => modelName != 'parser')
-                        .map((modelName) => {
-							return fetch(`${base}/params/loss/${modelName}`)
-                            .then((res) => res.text())
-                            .then((loss) => ({ id: modelName, title: modelName, loss }));
-                        }));
-    }).then((models) => {
-      this.models = models;
-    });
-	}
-	},
+  methods: {
+    fetch() {
+      // Initialize all the models and format them follow the data format above
+      const base = process.env.NUXT_ENV_BACKEND1_URL || 'http://localhost:10201'
+      const base2 =
+        process.env.NUXT_ENV_BACKEND2_URL || 'http://localhost:10200'
+      fetch(base2 + '/models')
+        .then(res => {
+          return res.json()
+        })
+        .then(body => {
+          return Promise.all(
+            body.models
+              .filter(modelName => modelName != 'parser')
+              .map(modelName => {
+                return fetch(`${base}/metadata?model=${modelName}`)
+                  .then(res => res.json())
+                  .then(meta => {
+                    return fetch(`${base}/params/loss/${modelName}`)
+                      .then(res => res.text())
+                      .then(loss => ({ id: modelName, title: meta.title, loss }))
+                  })
+              })
+          )
+        })
+        .then(models => {
+          this.models = models
+        })
+    }
+  },
   created() {
-	  this.fetch();
+    //this.fetch()
   }
 }
 </script>

@@ -1,8 +1,8 @@
 <template>
   <div>
-    <Header title="Session title" subtitle="By Author">
+    <Header :title="title" subtitle="by MakerForce">
       <template v-slot:buttons-left>
-		  <router-link class="my-2 mr-4" :to="{ name: 'admin' }">
+        <router-link class="my-2 mr-4" :to="{ name: 'admin' }">
           <fa-icon size="2x" :icon="['far', 'arrow-left']" />
         </router-link>
       </template>
@@ -15,43 +15,44 @@
         </button>
       </template>
       <template v-slot:content>
-        <div class="mx-4 my-8" title="Major graph">
-			<div class="font-medium">Share this link</div>
-			<div class="font-bold text-xl">{{ shareLink }}</div>
+        <div class="mx-3 my-6">
+          <h2 class="font-medium">Loss</h2>
+          <trend
+            :data="major"
+            :gradient="gradient"
+            :height="200"
+			:width="400"
+            auto-draw
+            smooth
+          >
+          </trend>
+        </div>
+        <div class="mx-4 my-8">
+          <div class="font-medium">Share this link</div>
+          <div class="font-bold text-xl">{{ shareLink }}</div>
         </div>
       </template>
     </Header>
     <Cards>
       <Card subtitle="Elapsed time">
         <CenteredText class="text-4xl">
-          10m 45s
+		Completed
         </CenteredText>
       </Card>
       <Card subtitle="Loss">
         <CenteredText class="text-4xl">
-          10:45
+          0.567
         </CenteredText>
       </Card>
-      <Card subtitle="Epoch">
+      <Card subtitle="Batch No.">
         <CenteredText class="text-4xl">
-          100
-        </CenteredText>
-      </Card>
-      <Card subtitle="Client count">
-        <CenteredText class="text-4xl">
-          4
+          468
         </CenteredText>
       </Card>
       <Card subtitle="Accuracy">
         <CenteredText class="text-4xl">
-          78%
+          87%
         </CenteredText>
-      </Card>
-      <Card subtitle="Loss">
-        <trend :data="major" :height="200" auto-draw smooth> </trend>
-      </Card>
-      <Card subtitle="Loss">
-        <trend :data="major" :height="200" auto-draw smooth> </trend>
       </Card>
     </Cards>
   </div>
@@ -75,17 +76,28 @@ export default {
     CenteredText,
     trend
   },
-	computed: {
-		
-		shareLink() {
-			return "https://staging.webml.app/" + this.$route.params.id;
-		},
-	},
+  computed: {
+    shareLink() {
+      return 'https://staging.webml.app/' + this.$route.params.id
+    }
+  },
   data() {
     return {
       gradient,
-      major: [0, 2, 5, 9, 5, 10, 3, 5, 0, 0, 1, 8, 2, 9, 0]
+      title: 'MNIST',
+      major: [0, 0, 0, 0]
     }
+  },
+  created: function() {
+    const base = process.env.NUXT_ENV_BACKEND2_URL || 'http://localhost:10200'
+    const id = this.$route.params.id
+    fetch(`${base}/metadata?model=${id}`)
+      .then(() => {
+        return res.json()
+      })
+      .then(body => {
+        this.title = body.title
+      })
   }
 }
 </script>
